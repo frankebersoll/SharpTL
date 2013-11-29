@@ -1,0 +1,2 @@
+# SharpTL
+Contains library for converting [Type Language](http://core.telegram.org/mtproto/TL) schemas to C# object model which supports [Binary Data Serialization](http://core.telegram.org/mtproto/serialize) as described in TL schema.
