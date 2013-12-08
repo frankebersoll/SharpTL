@@ -38,7 +38,7 @@ namespace SharpTL.Serializers
                 uint constructorNumber = context.Streamer.ReadUInt();
                 if (constructorNumber != ConstructorNumber)
                 {
-                    throw new InvalidTLConstructorNumber(string.Format("Invalid TL constructor number. Expected: {0}, actual: {1}.", ConstructorNumber, constructorNumber));
+                    throw new InvalidTLConstructorNumberException(string.Format("Invalid TL constructor number. Expected: {0}, actual: {1}.", ConstructorNumber, constructorNumber));
                 }
             }
 

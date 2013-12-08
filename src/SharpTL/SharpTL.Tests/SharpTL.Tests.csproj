@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Crc32Facts.cs" />
+    <Compile Include="TLShemaCompilerFacts.cs" />
     <Compile Include="TLStreamerFacts.cs" />
     <Compile Include="TestData\TestCases.cs" />
     <Compile Include="TestData\TestObjects.cs" />
@@ -53,6 +55,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="TL-schemas\Test.tl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpTL.PCL\SharpTL.PCL.csproj">
