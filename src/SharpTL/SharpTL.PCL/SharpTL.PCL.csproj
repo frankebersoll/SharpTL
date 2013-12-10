@@ -38,7 +38,7 @@
   <ItemGroup>
     <Compile Include="Exceptions.cs" />
     <Compile Include="ITLSerializer.cs" />
-    <Compile Include="TLSchema\TLSchemaCompiler.cs" />
+    <Compile Include="Serializers\BuiltIn.cs" />
     <Compile Include="TLSerializationContext.cs" />
     <Compile Include="Serializers\BooleanSerializer.cs" />
     <Compile Include="Serializers\DoubleSerializer.cs" />
@@ -61,9 +61,6 @@
     <Compile Include="TLTypeAttribute.cs" />
     <Compile Include="TLSerializersBucket.cs" />
     <Compile Include="TLVectorAttribute.cs" />
-    <Compile Include="Utils\Crc32.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

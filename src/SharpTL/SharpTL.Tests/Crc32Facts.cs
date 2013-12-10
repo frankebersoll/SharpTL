@@ -7,7 +7,7 @@
 using System.Text;
 using FluentAssertions;
 using NUnit.Framework;
-using SharpTL.Utils;
+using SharpTL.Compiler.Utils;
 
 namespace SharpTL.Tests
 {

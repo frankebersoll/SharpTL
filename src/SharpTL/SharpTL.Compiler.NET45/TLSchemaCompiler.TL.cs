@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TLSchemaCompiler.cs">
+// <copyright file="TLSchemaCompiler.TL.cs">
 //   Copyright (c) 2013 Alexander Logger. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -7,56 +7,35 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using SharpTL.Utils;
+using SharpTL.Compiler.Utils;
 
-namespace SharpTL.TLSchema
+namespace SharpTL.Compiler
 {
-    public class TLCombinatorParameter
-    {
-        public string Name { get; set; }
-        
-        public string Type { get; set; }
-
-        public int Order { get; set; }
-
-        public bool IsOptional { get; set; }
-    }
-
-    public class TLDeclaration
-    {
-        public string Text { get; set; }
-
-        public string CombinatorName { get; set; }
-
-        public uint CombinatorNumber { get; set; }
-
-        public string TypeName { get; set; }
-    }
-
     /// <summary>
     ///     TL-schema.
     /// </summary>
-    public class TLSchemaCompiler
+    public partial class TLSchemaCompiler
     {
         private static readonly Regex TLSchemaPartsRegex = new Regex(@"(?<Types>[\w\W\r\n]*)---functions---(?<Functions>[\w\W\r\n]*)");
         private static readonly Regex ReturnRegex = new Regex(@"\s*(\r\n|\n\r|\r|\n)+\s*");
 
         private static readonly Regex DeclarationRegex =
             new Regex(@"[\s]*(?<Declaration>(?<CombinatorName>[\w-[#]]*)(?:\s|#(?<CombinatorNumber>[0-9a-fA-F]{1,8})\s*)?" +
-                @"(?<Parameters>[\w\W-[;]]+?)??\s*?=\s*(?<TypeName>[\w\W]+?));");
+                @"(?<Parameters>[\w\W-[;=]]+?)??\s*?=\s*(?<TypeName>[\w\W]+?));");
 
         private static readonly Regex SingleLineCommentRegex = new Regex("//.*$", RegexOptions.Multiline);
         private static readonly Regex MultiLineCommentRegex = new Regex(@"/\*.*?\*/", RegexOptions.Singleline);
-
-        private static readonly Encoding DefaultEncoding = Encoding.UTF8;
 
         /// <summary>
         ///     Compile TL-schema to C# object model.
         /// </summary>
         /// <param name="tlSchema">TL-schema.</param>
-        /// <returns>Compiled schema.</returns>
-        public string Compile(string tlSchema)
+        /// <returns>Compiled TL-schema.</returns>
+        public string CompileFromTL(string tlSchema)
         {
+            // TODO: implement.
+            throw new NotImplementedException();
+
             tlSchema = RemoveComments(tlSchema);
             tlSchema = RemoveNewlines(tlSchema);
 
@@ -71,17 +50,16 @@ namespace SharpTL.TLSchema
             foreach (Match declarationMatch in DeclarationRegex.Matches(typesPart))
             {
                 string declarationText = declarationMatch.Groups["Declaration"].Value.Trim();
-                uint combinatorNumber = Crc32.Compute(declarationText, DefaultEncoding);
+                uint combinatorNumber = Crc32.Compute(declarationText, _encoding);
 
-                var declaration = new TLDeclaration {Text = declarationText, CombinatorName = declarationMatch.Groups["CombinatorName"].Value.Trim()};
+                var declaration = new TLCombinator {Name = declarationMatch.Groups["CombinatorName"].Value.Trim()};
 
                 Group combinatorNumberMatch = declarationMatch.Groups["CombinatorNumber"];
-                declaration.CombinatorNumber = combinatorNumberMatch.Success ? Convert.ToUInt32(combinatorNumberMatch.Value, 16) : combinatorNumber;
+                declaration.Number = combinatorNumberMatch.Success ? Convert.ToUInt32(combinatorNumberMatch.Value, 16) : combinatorNumber;
 
                 Group parametersMatch = declarationMatch.Groups["Parameters"];
                 if (parametersMatch.Success)
                 {
-//                    declaration.
                 }
             }
 

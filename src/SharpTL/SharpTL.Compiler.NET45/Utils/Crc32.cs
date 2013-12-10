@@ -7,7 +7,7 @@
 using System;
 using System.Text;
 
-namespace SharpTL.Utils
+namespace SharpTL.Compiler.Utils
 {
     /// <summary>
     ///     Crc32 calculator.

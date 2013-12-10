@@ -8,24 +8,29 @@ using System;
 using System.IO;
 using FluentAssertions;
 using NUnit.Framework;
-using SharpTL.TLSchema;
+using SharpTL.Compiler;
 
 namespace SharpTL.Tests
 {
     [TestFixture]
     public class TLShemaCompilerFacts
     {
-        [Test]
-        public void Should_compile_TL_schema()
-        {
-            var compiler = new TLSchemaCompiler();
-            var sharpTLSchema = compiler.Compile(GetTestTLSchema());
-            sharpTLSchema.Should().NotBeNullOrEmpty();
-        }
-
         private static string GetTestTLSchema()
         {
             return File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TL-schemas", "Test.tl"));
+        }
+
+        private static string GetTestTLJsonSchema()
+        {
+            return File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TL-schemas", "mtproto.json"));
+        }
+
+        [Test]
+        public void Should_compile_TL_schema()
+        {
+            var compiler = new TLSchemaCompiler("SharpTL.TestNamespace");
+            string sharpTLSchema = compiler.CompileFromJson(GetTestTLJsonSchema());
+            sharpTLSchema.Should().NotBeNullOrEmpty();
         }
     }
 }
