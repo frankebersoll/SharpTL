@@ -30,12 +30,18 @@ namespace SharpTL.Tests
             var vector = new List<object>
             {
                 new List<object> {new List<int> {1, 2, 3, 4, 5, 6, 7, 8, 9}, new List<object> {"Test", 0x4321}, 0x1234},
-                new User {Id = 9, FirstName = "Alexander", LastName = "L"},
+                new User {Id = 9, FirstName = "Alexander", LastName = "L", Key = new byte[] {0, 1, 2, 3, 4, 5}},
                 "Something here. Привет.",
                 0x100500,
                 new List<string> {"One.", "Two.", "Three."},
+                new byte[] {0, 255, 1, 2, 3, 4, 5},
                 new NoUser {Id = 500},
-                new List<IUser> {new User {Id = 1, FirstName = "John", LastName = "Doe"}, new User {Id = 2, FirstName = "Peter", LastName = "Parker"}, new NoUser {Id = 3}}
+                new List<IUser>
+                {
+                    new User {Id = 1, FirstName = "John", LastName = "Doe", Key = new byte[] {0, 1, 2, 3, 4, 5}},
+                    new User {Id = 2, FirstName = "Peter", LastName = "Parker", Key = new byte[] {0, 1, 2, 3, 4, 5}},
+                    new NoUser {Id = 3}
+                }
             };
             byte[] bytes = TLRig.Default.Serialize(vector);
 

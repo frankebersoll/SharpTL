@@ -4,10 +4,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using SharpTL.BaseTypes;
 using SharpTL.Serializers;
 
 namespace SharpTL.Compiler
@@ -18,6 +21,9 @@ namespace SharpTL.Compiler
     public partial class TLSchemaCompiler
     {
         private static readonly Regex VectorRegex = new Regex(@"^(?:(?<Boxed>V)|(?<Bare>v))ector<(?<ItemsType>\w[\w\W-[\s]]*)>$", RegexOptions.Compiled);
+        private static readonly Regex BareTypeRegex = new Regex(@"^%(?<TypeName>\w+)$", RegexOptions.Compiled);
+        private static readonly Regex Int128Regex = new Regex(@"^int128$", RegexOptions.Compiled);
+        private static readonly Regex Int256Regex = new Regex(@"^int256$", RegexOptions.Compiled);
         private readonly string _defaultNamespace;
         private readonly Encoding _encoding;
         private readonly Dictionary<string, TLType> _tlTypesCache = new Dictionary<string, TLType>();
@@ -76,16 +82,6 @@ namespace SharpTL.Compiler
                 select serializer.SupportedType.FullName).FirstOrDefault();
         }
 
-        private static string GetBuiltInTypeName(string typeName)
-        {
-            Match match = VectorRegex.Match(typeName);
-            if (match.Success)
-            {
-                typeName = string.Format("List<{0}>", GetBuiltInTypeName(match.Groups["ItemsType"].Value));
-            }
-            return typeName;
-        }
-
         private static bool HasBuiltInSerializer(uint constructorNumber)
         {
             return GetBuiltInTypeName(constructorNumber) != null;
@@ -94,11 +90,39 @@ namespace SharpTL.Compiler
         private TLType GetTLType(string typeName)
         {
             TLType type;
-            if (!_tlTypesCache.TryGetValue(typeName, out type))
+            if (_tlTypesCache.TryGetValue(typeName, out type))
+                return type;
+
+            string builtInName = typeName;
+
+            // Vector.
+            Match match = VectorRegex.Match(typeName);
+            if (match.Success)
             {
-                type = new TLType(typeName) {BuiltInName = GetBuiltInTypeName(typeName)};
-                _tlTypesCache.Add(typeName, type);
+                var itemsType = GetTLType(match.Groups["ItemsType"].Value);
+                builtInName = string.Format("List<{0}>", itemsType.BuiltInName);
             }
+
+            // int128.
+            match = Int128Regex.Match(typeName);
+            if (match.Success)
+            {
+                builtInName = typeof(Int128).FullName;
+            }
+
+            // int256.
+            match = Int256Regex.Match(typeName);
+            if (match.Success)
+            {
+                builtInName = typeof(Int256).FullName;
+            }
+
+            // % bare type.
+            // TODO;
+
+            type = new TLType(typeName) { BuiltInName = builtInName };
+            _tlTypesCache.Add(typeName, type);
+            
             return type;
         }
     }

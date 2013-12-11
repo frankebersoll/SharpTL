@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using SharpTL.BaseTypes;
 
 namespace SharpTL
 {
@@ -96,64 +97,6 @@ namespace SharpTL
         }
 
         /// <summary>
-        ///     Reads byte.
-        /// </summary>
-        public int ReadByte()
-        {
-            return _stream.ReadByte();
-        }
-
-        /// <summary>
-        ///     Reads 32-bit signed integer.
-        /// </summary>
-        public int ReadInt()
-        {
-            var bytes = new byte[4];
-            _stream.Read(bytes, 0, 4);
-
-            return _streamAsLittleEndianInternal ? bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24 : bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
-        }
-
-        /// <summary>
-        ///     Reads 32-bit unsigned integer.
-        /// </summary>
-        public uint ReadUInt()
-        {
-            return (uint) ReadInt();
-        }
-
-        /// <summary>
-        ///     Reads 64-bit signed integer.
-        /// </summary>
-        public long ReadLong()
-        {
-            var bytes = new byte[8];
-            _stream.Read(bytes, 0, 8);
-
-            return _streamAsLittleEndianInternal
-                ? bytes[0] | (long) bytes[1] << 8 | (long) bytes[2] << 16 | (long) bytes[3] << 24 | (long) bytes[4] << 32 | (long) bytes[5] << 40 | (long) bytes[6] << 48 |
-                    (long) bytes[7] << 56
-                : (long) bytes[0] << 56 | (long) bytes[1] << 48 | (long) bytes[2] << 40 | (long) bytes[3] << 32 | (long) bytes[4] << 24 | (long) bytes[5] << 16 |
-                    (long) bytes[6] << 8 | bytes[7];
-        }
-
-        /// <summary>
-        ///     Reads 64-bit unsigned integer.
-        /// </summary>
-        public ulong ReadULong()
-        {
-            return (ulong) ReadLong();
-        }
-
-        /// <summary>
-        ///     Reads double.
-        /// </summary>
-        public double ReadDouble()
-        {
-            return BitConverter.Int64BitsToDouble(ReadLong());
-        }
-
-        /// <summary>
         ///     Writes bytes from a buffer.
         /// </summary>
         /// <param name="buffer">Buffer.</param>
@@ -165,11 +108,30 @@ namespace SharpTL
         }
 
         /// <summary>
+        ///     Reads byte.
+        /// </summary>
+        public int ReadByte()
+        {
+            return _stream.ReadByte();
+        }
+
+        /// <summary>
         ///     Writes byte.
         /// </summary>
         public void WriteByte(byte value)
         {
             _stream.WriteByte(value);
+        }
+
+        /// <summary>
+        ///     Reads 32-bit signed integer.
+        /// </summary>
+        public int ReadInt()
+        {
+            var bytes = new byte[4];
+            _stream.Read(bytes, 0, 4);
+
+            return _streamAsLittleEndianInternal ? bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24 : bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
         }
 
         /// <summary>
@@ -198,11 +160,34 @@ namespace SharpTL
         }
 
         /// <summary>
+        ///     Reads 32-bit unsigned integer.
+        /// </summary>
+        public uint ReadUInt()
+        {
+            return (uint) ReadInt();
+        }
+
+        /// <summary>
         ///     Writes 32-bit unsigned integer.
         /// </summary>
         public void WriteUInt(uint value)
         {
             WriteInt((int) value);
+        }
+
+        /// <summary>
+        ///     Reads 64-bit signed integer.
+        /// </summary>
+        public long ReadLong()
+        {
+            var bytes = new byte[8];
+            _stream.Read(bytes, 0, 8);
+
+            return _streamAsLittleEndianInternal
+                ? bytes[0] | (long) bytes[1] << 8 | (long) bytes[2] << 16 | (long) bytes[3] << 24 | (long) bytes[4] << 32 | (long) bytes[5] << 40 | (long) bytes[6] << 48 |
+                    (long) bytes[7] << 56
+                : (long) bytes[0] << 56 | (long) bytes[1] << 48 | (long) bytes[2] << 40 | (long) bytes[3] << 32 | (long) bytes[4] << 24 | (long) bytes[5] << 16 |
+                    (long) bytes[6] << 8 | bytes[7];
         }
 
         /// <summary>
@@ -239,6 +224,14 @@ namespace SharpTL
         }
 
         /// <summary>
+        ///     Reads 64-bit unsigned integer.
+        /// </summary>
+        public ulong ReadULong()
+        {
+            return (ulong) ReadLong();
+        }
+
+        /// <summary>
         ///     Writes 64-bit unsigned integer.
         /// </summary>
         public void WriteULong(ulong value)
@@ -247,11 +240,113 @@ namespace SharpTL
         }
 
         /// <summary>
+        ///     Reads double.
+        /// </summary>
+        public double ReadDouble()
+        {
+            return BitConverter.Int64BitsToDouble(ReadLong());
+        }
+
+        /// <summary>
         ///     Writes double.
         /// </summary>
         public void WriteDouble(double value)
         {
             WriteLong(BitConverter.DoubleToInt64Bits(value));
+        }
+
+        /// <summary>
+        ///     Reads a 128-bit unsigned integer.
+        /// </summary>
+        public Int128 ReadInt128()
+        {
+            return new Int128 {H = ReadULong(), L = ReadULong()};
+        }
+
+        /// <summary>
+        ///     Writes a 128-bit unsigned integer.
+        /// </summary>
+        public void WriteInt128(Int128 value)
+        {
+            WriteULong(value.L);
+            WriteULong(value.H);
+        }
+
+        /// <summary>
+        ///     Reads a 256-bit unsigned integer.
+        /// </summary>
+        public Int256 ReadInt256()
+        {
+            return new Int256 {H = ReadInt128(), L = ReadInt128()};
+        }
+
+        /// <summary>
+        ///     Writes a 128-bit unsigned integer.
+        /// </summary>
+        public void WriteInt256(Int256 value)
+        {
+            WriteInt128(value.L);
+            WriteInt128(value.H);
+        }
+
+        /// <summary>
+        /// Reads a bunch of bytes formated as described in TL.
+        /// </summary>
+        public byte[] ReadTLBytes()
+        {
+            int offset = 1;
+            int length = ReadByte();
+            if (length == 254)
+            {
+                offset = 4;
+                length = ReadByte() | ReadByte() << 8 | ReadByte() << 16;
+            }
+            var bytes = new byte[length];
+            Read(bytes, 0, length);
+
+            offset = 4 - (offset + length) % 4;
+            if (offset < 4)
+            {
+                Position += offset;
+            }
+            return bytes;
+        }
+
+        /// <summary>
+        /// Writes a bunch of bytes formated as described in TL.
+        /// </summary>
+        /// <param name="bytes">Array of bytes.</param>
+        /// <exception cref="ArgumentOutOfRangeException">When array size exceeds </exception>
+        public void WriteTLBytes(byte[] bytes)
+        {
+            int length = bytes.Length;
+            int offset = 1;
+            if (length <= 253)
+            {
+                WriteByte((byte)length);
+            }
+            else if (length >= 254 && length <= 0xFFFFFF)
+            {
+                offset = 4;
+                var lBytes = new byte[4];
+                lBytes[0] = 254;
+                lBytes[1] = (byte)length;
+                lBytes[2] = (byte)(length >> 8);
+                lBytes[3] = (byte)(length >> 16);
+                Write(lBytes, 0, 4);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(string.Format("Array length {0} exceeds the maximum allowed {1}.", length, 0xFFFFFF));
+            }
+
+            Write(bytes, 0, length);
+
+            offset = 4 - (offset + length) % 4;
+            if (offset < 4)
+            {
+                Write(new byte[offset], 0, offset);
+            }
         }
     }
 }
