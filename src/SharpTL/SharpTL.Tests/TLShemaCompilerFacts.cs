@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using FluentAssertions;
 using NUnit.Framework;
 using SharpTL.Compiler;
@@ -28,9 +29,8 @@ namespace SharpTL.Tests
         [Test]
         public void Should_compile_TL_schema()
         {
-            var compiler = new TLSchemaCompiler("SharpTL.TestNamespace");
-            string sharpTLSchema = compiler.CompileFromJson(GetTestTLJsonSchema());
-            sharpTLSchema.Should().NotBeNullOrEmpty();
+            var sharpTLSchemaCode = TLSchemaCompiler.CompileFromJson(GetTestTLJsonSchema(), "SharpTL.TestNamespace", Encoding.UTF8);
+            sharpTLSchemaCode.Should().NotBeNullOrEmpty();
         }
     }
 }

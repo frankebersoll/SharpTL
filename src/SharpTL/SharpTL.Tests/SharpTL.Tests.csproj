@@ -58,9 +58,6 @@
     <None Include="TL-schemas\mtproto.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TL-schemas\schema1.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="TL-schemas\Test.tl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

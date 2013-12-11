@@ -26,7 +26,7 @@ namespace SharpTL.Compiler
 
         public List<TLCombinatorParameter> Parameters { get; set; }
 
-        public string Type { get; set; }
+        public TLType Type { get; set; }
 
         public string Text
         {
@@ -42,7 +42,7 @@ namespace SharpTL.Compiler
                 _text = string.Format("{0}#{1:X8} {2} = {3}", Name, Number,
                     (Parameters != null && Parameters.Count > 0)
                         ? Parameters.Select(parameter => parameter.ToString()).Aggregate((paramsText, paramText) => paramsText + " " + paramText)
-                        : string.Empty, Type);
+                        : string.Empty, Type.Name);
             }
             return _text;
         }

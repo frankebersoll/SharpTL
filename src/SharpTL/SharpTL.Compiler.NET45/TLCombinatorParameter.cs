@@ -20,7 +20,7 @@ namespace SharpTL.Compiler
 
         public string Name { get; set; }
 
-        public string Type { get; set; }
+        public TLType Type { get; set; }
 
         public int Order { get; set; }
 
@@ -35,7 +35,7 @@ namespace SharpTL.Compiler
             if (_lastHashCode != currentHashCode)
             {
                 _lastHashCode = currentHashCode;
-                _text = string.IsNullOrWhiteSpace(Name) ? Type : string.Format("{0}:{1}", Name, Type);
+                _text = string.IsNullOrWhiteSpace(Name) ? Type.Name : string.Format("{0}:{1}", Name, Type.Name);
             }
             return _text;
         }

@@ -32,7 +32,7 @@ namespace SharpTL.Serializers
         }
 
         /// <summary>
-        /// Built-in base type serializers.
+        ///     Built-in base type serializers.
         /// </summary>
         public static IEnumerable<ITLSerializer> BaseTypeSerializers
         {

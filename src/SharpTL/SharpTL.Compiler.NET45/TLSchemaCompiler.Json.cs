@@ -5,31 +5,32 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using ServiceStack.Text;
 
 namespace SharpTL.Compiler
 {
     public partial class TLSchemaCompiler
     {
-        public string CompileFromJson(string json)
+        public static string CompileFromJson(string json, string defaultNamespace, Encoding encoding)
         {
-            return Compile(GetTLSchemaFromJson(json));
+            var compiler = new TLSchemaCompiler(defaultNamespace, encoding);
+            TLSchema schema = compiler.GetTLSchemaFromJson(json);
+            return compiler.Compile(schema);
         }
 
         public TLSchema GetTLSchemaFromJson(string json)
         {
             JsonObject tlSchemaJsonObject = JsonObject.Parse(json);
 
-            var constructors = CreateConstructorsFromJsonArrayObjects(tlSchemaJsonObject.ArrayObjects("constructors"));
-            var methods = CreateMethodsFromJsonArrayObjects(tlSchemaJsonObject.ArrayObjects("methods"));
-            var types = CreateTLTypes(constructors);
+            List<TLCombinator> constructors = CreateConstructorsFromJsonArrayObjects(tlSchemaJsonObject.ArrayObjects("constructors"));
+            List<TLCombinator> methods = CreateMethodsFromJsonArrayObjects(tlSchemaJsonObject.ArrayObjects("methods"));
+            List<TLType> types = UpdateAndGetTLTypes(constructors);
 
-            return new TLSchema
-            {
-                Constructors = constructors,
-                Methods = methods,
-                Types = types
-            };
+            var schema = new TLSchema {Constructors = constructors, Methods = methods, Types = types};
+
+            return schema;
         }
 
         private List<TLCombinator> CreateConstructorsFromJsonArrayObjects(JsonArrayObjects objects)
@@ -42,7 +43,7 @@ namespace SharpTL.Compiler
             return CreateCombinatorsFromJsonArrayObjects(objects, "method");
         }
 
-        private static List<TLCombinator> CreateCombinatorsFromJsonArrayObjects(JsonArrayObjects objects, string nameKey)
+        private List<TLCombinator> CreateCombinatorsFromJsonArrayObjects(JsonArrayObjects objects, string nameKey)
         {
             return
                 objects.ConvertAll(
@@ -51,9 +52,9 @@ namespace SharpTL.Compiler
                         {
                             Number = (uint) x.JsonTo<int>("id"),
                             Name = x.Get(nameKey),
-                            Parameters = x.ArrayObjects("params").ConvertAll(param => new TLCombinatorParameter {Name = param.Get("name"), Type = param.Get("type")}),
-                            Type = x.Get("type")
-                        });
+                            Parameters = x.ArrayObjects("params").ConvertAll(param => new TLCombinatorParameter {Name = param.Get("name"), Type = GetTLType(param.Get("type"))}),
+                            Type = GetTLType(x.Get("type"))
+                        }).Where(combinator => !HasBuiltInSerializer(combinator.Number)).ToList();
         }
     }
 }

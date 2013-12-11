@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 
 namespace SharpTL.Compiler
@@ -21,13 +20,22 @@ namespace SharpTL.Compiler
         private int _lastHashCode;
         private string _text;
 
+        public TLType(string name)
+        {
+            Name = name;
+            Constructors = new List<TLCombinator>();
+        }
+
         public string Name { get; set; }
 
-        public string ClrName { get; set; }
+        public string BuiltInName { get; set; }
 
-        public uint Number { get { return ConstructorNumbers.Aggregate((u, u1) => unchecked (u + u1)); } }
+        public uint? Number
+        {
+            get { return Constructors != null ? Constructors.Select(ctr => ctr.Number).Aggregate((u, u1) => unchecked(u + u1)) : (uint?) null; }
+        }
 
-        public List<uint> ConstructorNumbers { get; set; }
+        public List<TLCombinator> Constructors { get; set; }
 
         public string Text
         {
@@ -40,9 +48,9 @@ namespace SharpTL.Compiler
             if (_lastHashCode != currentHashCode)
             {
                 _lastHashCode = currentHashCode;
-                _text = string.Format("{0} #{1:X8} ({2})", Name, Number,
-                    (ConstructorNumbers != null && ConstructorNumbers.Count > 0)
-                        ? ConstructorNumbers.Select(u => u.ToString("X8")).Aggregate((paramsText, paramText) => paramsText + " " + paramText)
+                _text = string.Format("{0} 0x{1:X8} (0x{2})", Name, Number,
+                    (Constructors != null && Constructors.Count > 0)
+                        ? Constructors.Select(u => u.Number.ToString("X8")).Aggregate((paramsText, paramText) => paramsText + " + 0x" + paramText)
                         : string.Empty);
             }
             return _text;
@@ -59,7 +67,7 @@ namespace SharpTL.Compiler
             {
                 return true;
             }
-            return string.Equals(Name, other.Name);
+            return string.Equals(Name, other.Name) && string.Equals(BuiltInName, other.BuiltInName) && Constructors.SequenceEqual(other.Constructors);
         }
 
         public override bool Equals(object obj)
@@ -72,7 +80,7 @@ namespace SharpTL.Compiler
             {
                 return true;
             }
-            if (obj.GetType() != GetType())
+            if (obj.GetType() != this.GetType())
             {
                 return false;
             }
@@ -81,7 +89,13 @@ namespace SharpTL.Compiler
 
         public override int GetHashCode()
         {
-            return (Name != null ? Name.GetHashCode() : 0);
+            unchecked
+            {
+                int hashCode = (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (BuiltInName != null ? BuiltInName.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Constructors != null ? Constructors.GetHashCode() : 0);
+                return hashCode;
+            }
         }
 
         public static bool operator ==(TLType left, TLType right)
