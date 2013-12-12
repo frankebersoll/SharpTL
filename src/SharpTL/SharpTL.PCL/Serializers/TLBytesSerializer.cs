@@ -1,17 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="StringSerializer.cs">
+// <copyright file="TLBytesSerializer.cs">
 //   Copyright (c) 2013 Alexander Logger. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using System.Text;
 
 namespace SharpTL.Serializers
 {
-    public class StringSerializer : TLBareTypeSerializerBase
+    public class TLBytesSerializer : TLBareTypeSerializerBase
     {
-        private static readonly Type _SupportedType = typeof (string);
+        private static readonly Type _SupportedType = typeof (byte[]);
 
         public override Type SupportedType
         {
@@ -23,26 +22,14 @@ namespace SharpTL.Serializers
             get { return 0xB5286E24; }
         }
 
-        private static Encoding Encoding
-        {
-            get { return Encoding.UTF8; }
-        }
-
         protected override object ReadBody(TLSerializationContext context)
         {
-            byte[] bytes = context.Streamer.ReadTLBytes();
-            return Encoding.GetString(bytes, 0, bytes.Length);
+            return context.Streamer.ReadTLBytes();
         }
 
         protected override void WriteBody(object obj, TLSerializationContext context)
         {
-            var str = (string) obj;
-            TLStreamer streamer = context.Streamer;
-
-            // TODO: ensure encoding.
-            byte[] bytes = Encoding.GetBytes(str);
-
-            streamer.WriteTLBytes(bytes);
+            context.Streamer.WriteTLBytes((byte[]) obj);
         }
     }
 }

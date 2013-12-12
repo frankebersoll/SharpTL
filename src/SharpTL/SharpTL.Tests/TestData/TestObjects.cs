@@ -113,6 +113,9 @@ namespace SharpTL.Tests.TestData
         [TLProperty(1)]
         public int Id { get; set; }
 
+        [TLProperty(4)]
+        public byte[] Key { get; set; }
+
         #region Equality
         public bool Equals(User other)
         {
@@ -124,7 +127,7 @@ namespace SharpTL.Tests.TestData
             {
                 return true;
             }
-            return Id == other.Id && string.Equals(FirstName, other.FirstName) && string.Equals(LastName, other.LastName);
+            return Id == other.Id && string.Equals(FirstName, other.FirstName) && string.Equals(LastName, other.LastName) && Key.SequenceEqual(other.Key);
         }
 
         public override bool Equals(object obj)
@@ -151,6 +154,7 @@ namespace SharpTL.Tests.TestData
                 int hashCode = Id;
                 hashCode = (hashCode*397) ^ (FirstName != null ? FirstName.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (LastName != null ? LastName.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Key != null ? Key.GetHashCode() : 0);
                 return hashCode;
             }
         }

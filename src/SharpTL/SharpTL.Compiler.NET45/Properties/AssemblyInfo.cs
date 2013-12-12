@@ -6,5 +6,5 @@
 
 using System.Reflection;
 
-[assembly: AssemblyTitle("SharpTL")]
-[assembly: AssemblyDescription("SharpTL core library.")]
+[assembly: AssemblyTitle("SharpTL.Compiler")]
+[assembly: AssemblyDescription("SharpTL compiler core library.")]

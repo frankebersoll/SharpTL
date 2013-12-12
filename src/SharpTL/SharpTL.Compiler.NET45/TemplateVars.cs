@@ -1,10 +1,14 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AssemblyInfo.cs">
+// <copyright file="TemplateVars.cs">
 //   Copyright (c) 2013 Alexander Logger. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Reflection;
-
-[assembly: AssemblyTitle("SharpTL")]
-[assembly: AssemblyDescription("SharpTL core library.")]
+namespace SharpTL.Compiler
+{
+    public class TemplateVars
+    {
+        public TLSchema Schema { get; set; }
+        public string Namespace { get; set; }
+    }
+}
