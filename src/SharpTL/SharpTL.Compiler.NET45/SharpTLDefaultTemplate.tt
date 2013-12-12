@@ -44,6 +44,19 @@ foreach (TLType type in _templateVars.Schema.Types)
 }
 #>
 
+	// TL methods.
+
+	public interface ITLMethods
+	{
+<#
+    foreach (var method in _templateVars.Schema.Methods)
+    {
+#>
+		<#=method.Type.BuiltInName#> <#=method.Name#>(<#=method.Name#> args);
+<#        
+    }
+#>
+	}
 }
 <#+[UsedImplicitly] private TemplateVars _templateVars; #>
 <#+

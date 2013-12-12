@@ -94,17 +94,57 @@ foreach (TLType type in _templateVars.Schema.Types)
             
             #line default
             #line hidden
-            this.Write("\r\n}\r\n");
+            this.Write("\r\n\t// TL methods.\r\n\r\n\tpublic interface ITLMethods\r\n\t{\r\n");
+            
+            #line 51 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+
+    foreach (var method in _templateVars.Schema.Methods)
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t");
+            
+            #line 55 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.Type.BuiltInName));
+            
+            #line default
+            #line hidden
+            this.Write(" ");
+            
+            #line 55 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
+            
+            #line default
+            #line hidden
+            this.Write("(");
+            
+            #line 55 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" args);\r\n");
+            
+            #line 56 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        
+    }
+
+            
+            #line default
+            #line hidden
+            this.Write("\t}\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 48 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 61 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 [UsedImplicitly] private TemplateVars _templateVars; 
         
         #line default
         #line hidden
         
-        #line 49 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 62 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 
 private void WriteConstructors(IEnumerable<TLCombinator> constructors, IEnumerable<TLType> types)
 {
@@ -116,42 +156,42 @@ private void WriteConstructors(IEnumerable<TLCombinator> constructors, IEnumerab
         #line default
         #line hidden
         
-        #line 55 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 68 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write("\t[TLObject(0x");
 
         
         #line default
         #line hidden
         
-        #line 56 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 69 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(constructor.Number.ToString("X8")));
 
         
         #line default
         #line hidden
         
-        #line 56 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 69 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(")]\r\n\tpublic partial class ");
 
         
         #line default
         #line hidden
         
-        #line 57 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 70 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(string.Format("{0}{1}", constructor.Name, (typesList != null && typesList.Contains(constructor.Type)) ? " : " + constructor.Type.BuiltInName : String.Empty)));
 
         
         #line default
         #line hidden
         
-        #line 59 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 72 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write("\r\n\t{\r\n");
 
         
         #line default
         #line hidden
         
-        #line 61 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 74 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 
         int i = 0;
         foreach (TLCombinatorParameter parameter in constructor.Parameters)
@@ -162,63 +202,63 @@ this.Write("\r\n\t{\r\n");
         #line default
         #line hidden
         
-        #line 66 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 79 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write("\t\t[TLProperty(");
 
         
         #line default
         #line hidden
         
-        #line 67 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 80 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(++i));
 
         
         #line default
         #line hidden
         
-        #line 67 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 80 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(serModeOverride.HasValue ? string.Format(", {0}", serModeOverride.Value) : String.Empty));
 
         
         #line default
         #line hidden
         
-        #line 67 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 80 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(")]\r\n\t\tpublic ");
 
         
         #line default
         #line hidden
         
-        #line 68 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 81 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(parameter.Type.BuiltInName));
 
         
         #line default
         #line hidden
         
-        #line 68 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 81 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(" ");
 
         
         #line default
         #line hidden
         
-        #line 68 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 81 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(parameter.Name));
 
         
         #line default
         #line hidden
         
-        #line 68 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 81 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write(" { get; set; }\r\n\r\n");
 
         
         #line default
         #line hidden
         
-        #line 70 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 83 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 
         } 
 
@@ -226,14 +266,14 @@ this.Write(" { get; set; }\r\n\r\n");
         #line default
         #line hidden
         
-        #line 72 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 85 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 this.Write("\t}\r\n\r\n");
 
         
         #line default
         #line hidden
         
-        #line 75 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
+        #line 88 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
 
     }
 } 
