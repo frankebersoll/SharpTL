@@ -13,7 +13,7 @@ namespace SharpTL
     /// <summary>
     ///     TL type attribute.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class TLTypeAttribute : Attribute
     {
         /// <summary>

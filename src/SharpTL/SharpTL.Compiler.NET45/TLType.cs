@@ -23,6 +23,7 @@ namespace SharpTL.Compiler
         public TLType(string name)
         {
             Name = name;
+            BuiltInName = name;
             Constructors = new List<TLCombinator>();
         }
 
@@ -32,10 +33,12 @@ namespace SharpTL.Compiler
 
         public uint? Number
         {
-            get { return Constructors != null ? Constructors.Select(ctr => ctr.Number).Aggregate((u, u1) => unchecked(u + u1)) : (uint?) null; }
+            get { return Constructors != null && Constructors.Count > 0 ? Constructors.Select(ctr => ctr.Number).Aggregate((u, u1) => unchecked(u + u1)) : (uint?)null; }
         }
 
         public List<TLCombinator> Constructors { get; set; }
+
+        public TLSerializationMode? SerializationModeOverride { get; set; }
 
         public string Text
         {

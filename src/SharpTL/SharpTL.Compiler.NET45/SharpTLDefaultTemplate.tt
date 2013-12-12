@@ -12,13 +12,13 @@
 // </auto-generated>
 // ------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
 namespace <#=_templateVars.Namespace #>
 {
+	using System;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Linq;
+
 	// TL constructors.
 
 <# foreach (TLCombinator constructor in _templateVars.Schema.Constructors)
@@ -26,15 +26,17 @@ namespace <#=_templateVars.Namespace #>
 #>
 	[TLObject(0x<#=constructor.Number.ToString("X8") #>)]
 	public partial class <#=
-    string.Format("{0}{1}", constructor.Name, _templateVars.Schema.Types.Contains(constructor.Type) ? " : " + constructor.Type.BuiltInName : String.Empty) #>
+    string.Format("{0}{1}", constructor.Name, _templateVars.Schema.Types.Contains(constructor.Type) ? " : " + constructor.Type.BuiltInName : String.Empty)
+    #>
 	{
 <#
     int i = 0;
     foreach (TLCombinatorParameter parameter in constructor.Parameters)
     {
+        TLSerializationMode? serModeOverride = parameter.Type.SerializationModeOverride;
 #>
-		[TLProperty(<#=++i #>)]
-		public <#=parameter.Type.BuiltInName #> <#=parameter.Name #> { get; set; }
+		[TLProperty(<#=++i #><#=serModeOverride.HasValue ? string.Format(", {0}", serModeOverride.Value) : String.Empty #>)]
+		public <#=parameter.Type.BuiltInName #> <#= parameter.Name #> { get; set; }
 
 <# } #>
 	}
@@ -48,7 +50,7 @@ namespace <#=_templateVars.Namespace #>
 #>
 	[TLType(<#=type.Constructors.Select(constructor => string.Format("typeof({0})", constructor.Name)).Aggregate((s, s1) => s + ", " + s1)
     #>)]
-	public partial abstract class <#=type.Name #>
+	public abstract partial class <#=type.Name #>
 	{
 	}
 

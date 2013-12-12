@@ -4,10 +4,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using SharpTL.BaseTypes;
@@ -20,10 +18,11 @@ namespace SharpTL.Compiler
     /// </summary>
     public partial class TLSchemaCompiler
     {
-        private static readonly Regex VectorRegex = new Regex(@"^(?:(?<Boxed>V)|(?<Bare>v))ector<(?<ItemsType>\w[\w\W-[\s]]*)>$", RegexOptions.Compiled);
-        private static readonly Regex BareTypeRegex = new Regex(@"^%(?<TypeName>\w+)$", RegexOptions.Compiled);
+        private static readonly Regex VectorRegex = new Regex(@"^(?:(?<Boxed>V)|(?<Bare>v))ector<(?<ItemsType>%?\w[\w\W-[\s]]*)>$", RegexOptions.Compiled);
+        private static readonly Regex BareTypeRegex = new Regex(@"^%(?<Type>\w+)$", RegexOptions.Compiled);
         private static readonly Regex Int128Regex = new Regex(@"^int128$", RegexOptions.Compiled);
         private static readonly Regex Int256Regex = new Regex(@"^int256$", RegexOptions.Compiled);
+        private static readonly Regex TLBytesRegex = new Regex(@"^bytes$", RegexOptions.Compiled);
         private readonly string _defaultNamespace;
         private readonly Encoding _encoding;
         private readonly Dictionary<string, TLType> _tlTypesCache = new Dictionary<string, TLType>();
@@ -49,6 +48,8 @@ namespace SharpTL.Compiler
 
         protected string Compile(TLSchema tlSchema)
         {
+            SetBuiltInTypeNames(tlSchema);
+
             var template = new SharpTLDefaultTemplate(new TemplateVars {Schema = tlSchema, Namespace = _defaultNamespace});
             return template.TransformText();
         }
@@ -90,40 +91,69 @@ namespace SharpTL.Compiler
         private TLType GetTLType(string typeName)
         {
             TLType type;
-            if (_tlTypesCache.TryGetValue(typeName, out type))
-                return type;
+            if (!_tlTypesCache.TryGetValue(typeName, out type))
+            {
+                type = new TLType(typeName);
+                _tlTypesCache.Add(typeName, type);
+            }
+            return type;
+        }
 
-            string builtInName = typeName;
+        private void SetBuiltInTypeNames(TLSchema schema)
+        {
+            foreach (TLCombinatorParameter parameter in schema.Constructors.SelectMany(constructor => constructor.Parameters))
+            {
+                FixType(parameter.Type, schema);
+            }
+        }
+
+        private void FixType(TLType type, TLSchema schema)
+        {
+            List<TLCombinator> constructors = schema.Constructors;
+            string typeName = type.Name;
 
             // Vector.
             Match match = VectorRegex.Match(typeName);
             if (match.Success)
             {
-                var itemsType = GetTLType(match.Groups["ItemsType"].Value);
-                builtInName = string.Format("List<{0}>", itemsType.BuiltInName);
+                TLType itemsType = GetTLType(match.Groups["ItemsType"].Value);
+                FixType(itemsType, schema);
+                type.BuiltInName = string.Format("System.Collections.Generic.List<{0}>", itemsType.BuiltInName);
+                return;
             }
 
             // int128.
             match = Int128Regex.Match(typeName);
             if (match.Success)
             {
-                builtInName = typeof(Int128).FullName;
+                type.BuiltInName = typeof (Int128).FullName;
+                return;
             }
 
             // int256.
             match = Int256Regex.Match(typeName);
             if (match.Success)
             {
-                builtInName = typeof(Int256).FullName;
+                type.BuiltInName = typeof (Int256).FullName;
+                return;
             }
 
-            // % bare type.
-            // TODO;
+            // bytes.
+            match = TLBytesRegex.Match(typeName);
+            if (match.Success)
+            {
+                type.BuiltInName = typeof (byte[]).FullName;
+                return;
+            }
 
-            type = new TLType(typeName) { BuiltInName = builtInName };
-            _tlTypesCache.Add(typeName, type);
-            
-            return type;
+            // % bare types.
+            match = BareTypeRegex.Match(type.Name);
+            if (match.Success)
+            {
+                typeName = match.Groups["Type"].Value;
+                type.BuiltInName = constructors.Where(combinator => combinator.Type.Name == typeName).Select(combinator => combinator.Name).SingleOrDefault() ?? typeName;
+                type.SerializationModeOverride = TLSerializationMode.Bare;
+            }
         }
     }
 }
