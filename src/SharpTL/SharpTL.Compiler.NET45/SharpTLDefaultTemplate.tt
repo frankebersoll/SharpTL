@@ -12,13 +12,10 @@
 // </auto-generated>
 // ------------------------------------------------------------------------------
 
+using SharpTL;
+
 namespace <#=_templateVars.Namespace #>
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-
 	// TL constructors.
 
 <# foreach (TLCombinator constructor in _templateVars.Schema.Constructors)
