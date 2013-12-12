@@ -71,9 +71,14 @@ namespace SharpTL.Tests.TestData
 
                 // Response to getUsers([2,3,4])
                 new DataUnit(
-                    new List<IUser> {new User {Id = 2, FirstName = "Pavel", LastName = "Durov"}, new NoUser {Id = 3}, new User {Id = 4, FirstName = "Nikolay", LastName = "Durov"}},
-                    GetBytes(0x1cb5c415, 0x3, 0xd23c81a3, 0x2, 0x76615005, 0x6c65, 0x72754405, 0x766f, 0xc67599d1, 0x3, 0xd23c81a3, 0x4, 0x6b694e07, 0x79616c6f, 0x72754405, 0x766f),
-                    "List<IUser>"),
+                    new List<IUser>
+                    {
+                        new User {Id = 2, FirstName = "Pavel", LastName = "Durov", Key = new byte[] {1, 2, 3, 4, 5}},
+                        new NoUser {Id = 3},
+                        new User {Id = 4, FirstName = "Nikolay", LastName = "Durov", Key = new byte[] {6, 7, 8, 9, 10}}
+                    },
+                    GetBytes(0x1cb5c415, 0x3, 0xd23c81a3, 0x2, 0x76615005, 0x6c65, 0x72754405, 0x766f, 0x03020105, 0x0504, 0xc67599d1, 0x3, 0xd23c81a3, 0x4, 0x6b694e07, 0x79616c6f,
+                        0x72754405, 0x766f, 0x08070605, 0x0A09), "List<IUser>"),
             };
         }
 

@@ -22,17 +22,16 @@ namespace SharpTL
         private readonly Dictionary<uint, ITLSerializer> _constructorNumberSerializersIndex = new Dictionary<uint, ITLSerializer>();
         private readonly Dictionary<Type, ITLSerializer> _serializersIndex = new Dictionary<Type, ITLSerializer>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TLSerializersBucket"/> class.
+        /// </summary>
         public TLSerializersBucket()
         {
             // Add base type serializers.
-            Add(new IntSerializer());
-            Add(new UIntSerializer());
-            Add(new LongSerializer());
-            Add(new ULongSerializer());
-            Add(new DoubleSerializer());
-            Add(new StringSerializer());
-            Add(new BooleanSerializer());
-            Add(new TLVectorSerializer<object>());
+            foreach (var serializer in BuiltIn.BaseTypeSerializers)
+            {
+                Add(serializer);
+            }
         }
 
         /// <summary>

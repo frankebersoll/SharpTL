@@ -1,10 +1,16 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AssemblyInfo.cs">
+// <copyright file="SharpTLDefaultTemplateCode.cs">
 //   Copyright (c) 2013 Alexander Logger. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Reflection;
-
-[assembly: AssemblyTitle("SharpTL")]
-[assembly: AssemblyDescription("SharpTL core library.")]
+namespace SharpTL.Compiler
+{
+    public partial class SharpTLDefaultTemplate
+    {
+        public SharpTLDefaultTemplate(TemplateVars templateVars)
+        {
+            _templateVars = templateVars;
+        }
+    }
+}
