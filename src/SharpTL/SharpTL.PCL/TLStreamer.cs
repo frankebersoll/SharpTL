@@ -16,6 +16,7 @@ namespace SharpTL
     public class TLStreamer : IDisposable
     {
         private readonly bool _shouldDisposeTheStream;
+        private bool _disposed;
         private Stream _stream;
         private bool _streamAsLittleEndianInternal = true;
 
@@ -71,18 +72,6 @@ namespace SharpTL
         public long Length
         {
             get { return _stream.Length; }
-        }
-
-        /// <summary>
-        ///     Dispose.
-        /// </summary>
-        public void Dispose()
-        {
-            if (_stream != null && _shouldDisposeTheStream)
-            {
-                _stream.Dispose();
-            }
-            _stream = null;
         }
 
         /// <summary>
@@ -290,7 +279,7 @@ namespace SharpTL
         }
 
         /// <summary>
-        /// Reads a bunch of bytes formated as described in TL.
+        ///     Reads a bunch of bytes formated as described in TL.
         /// </summary>
         public byte[] ReadTLBytes()
         {
@@ -304,7 +293,7 @@ namespace SharpTL
             var bytes = new byte[length];
             Read(bytes, 0, length);
 
-            offset = 4 - (offset + length) % 4;
+            offset = 4 - (offset + length)%4;
             if (offset < 4)
             {
                 Position += offset;
@@ -313,7 +302,7 @@ namespace SharpTL
         }
 
         /// <summary>
-        /// Writes a bunch of bytes formated as described in TL.
+        ///     Writes a bunch of bytes formated as described in TL.
         /// </summary>
         /// <param name="bytes">Array of bytes.</param>
         /// <exception cref="ArgumentOutOfRangeException">When array size exceeds </exception>
@@ -323,16 +312,16 @@ namespace SharpTL
             int offset = 1;
             if (length <= 253)
             {
-                WriteByte((byte)length);
+                WriteByte((byte) length);
             }
             else if (length >= 254 && length <= 0xFFFFFF)
             {
                 offset = 4;
                 var lBytes = new byte[4];
                 lBytes[0] = 254;
-                lBytes[1] = (byte)length;
-                lBytes[2] = (byte)(length >> 8);
-                lBytes[3] = (byte)(length >> 16);
+                lBytes[1] = (byte) length;
+                lBytes[2] = (byte) (length >> 8);
+                lBytes[3] = (byte) (length >> 16);
                 Write(lBytes, 0, 4);
             }
             else
@@ -342,11 +331,53 @@ namespace SharpTL
 
             Write(bytes, 0, length);
 
-            offset = 4 - (offset + length) % 4;
+            offset = 4 - (offset + length)%4;
             if (offset < 4)
             {
                 Write(new byte[offset], 0, offset);
             }
         }
+
+        #region Disposing
+        /// <summary>
+        ///     Dispose.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Dispose.
+        /// </summary>
+        /// <param name="disposing">
+        ///     A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both
+        ///     managed and native resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (_stream != null && _shouldDisposeTheStream)
+                {
+                    _stream.Dispose();
+                }
+                _stream = null;
+            }
+
+            _disposed = true;
+        }
+
+        ~TLStreamer()
+        {
+            Dispose(false);
+        }
+        #endregion
     }
 }
