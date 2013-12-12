@@ -6,16 +6,15 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ServiceStack.Text;
 
 namespace SharpTL.Compiler
 {
     public partial class TLSchemaCompiler
     {
-        public static string CompileFromJson(string json, string defaultNamespace, Encoding encoding)
+        public static string CompileFromJson(string json, string defaultNamespace)
         {
-            var compiler = new TLSchemaCompiler(defaultNamespace, encoding);
+            var compiler = new TLSchemaCompiler(defaultNamespace);
             TLSchema schema = compiler.GetTLSchemaFromJson(json);
             return compiler.Compile(schema);
         }

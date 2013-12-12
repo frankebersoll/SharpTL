@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpTL.Tests", "SharpTL.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpTL.Compiler.NET45", "SharpTL.Compiler.NET45\SharpTL.Compiler.NET45.csproj", "{A02EA59B-E026-437D-8ED9-AD76ACA58DB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpTL.Compiler.CLI.NET45", "SharpTL.Compiler.CLI.NET45\SharpTL.Compiler.CLI.NET45.csproj", "{52C2FC3F-AA5B-47C8-9243-288983D309CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A02EA59B-E026-437D-8ED9-AD76ACA58DB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A02EA59B-E026-437D-8ED9-AD76ACA58DB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A02EA59B-E026-437D-8ED9-AD76ACA58DB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52C2FC3F-AA5B-47C8-9243-288983D309CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52C2FC3F-AA5B-47C8-9243-288983D309CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52C2FC3F-AA5B-47C8-9243-288983D309CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52C2FC3F-AA5B-47C8-9243-288983D309CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

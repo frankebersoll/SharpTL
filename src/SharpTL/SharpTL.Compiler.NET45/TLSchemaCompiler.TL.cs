@@ -26,20 +26,27 @@ namespace SharpTL.Compiler
         private static readonly Regex SingleLineCommentRegex = new Regex("//.*$", RegexOptions.Multiline);
         private static readonly Regex MultiLineCommentRegex = new Regex(@"/\*.*?\*/", RegexOptions.Singleline);
 
+        public static string CompileFromTL(string tl, string defaultNamespace)
+        {
+            var compiler = new TLSchemaCompiler(defaultNamespace);
+            TLSchema schema = compiler.GetTLSchemaFromTL(tl);
+            return compiler.Compile(schema);
+        }
+
         /// <summary>
         ///     Compile TL-schema to C# object model.
         /// </summary>
-        /// <param name="tlSchema">TL-schema.</param>
+        /// <param name="tlSchemaText">TL-schema.</param>
         /// <returns>Compiled TL-schema.</returns>
-        public string CompileFromTL(string tlSchema)
+        public TLSchema GetTLSchemaFromTL(string tlSchemaText)
         {
             // TODO: implement.
             throw new NotImplementedException();
 
-            tlSchema = RemoveComments(tlSchema);
-            tlSchema = RemoveNewlines(tlSchema);
+            tlSchemaText = RemoveComments(tlSchemaText);
+            tlSchemaText = RemoveNewlines(tlSchemaText);
 
-            Match partsMatch = TLSchemaPartsRegex.Match(tlSchema);
+            Match partsMatch = TLSchemaPartsRegex.Match(tlSchemaText);
             if (!partsMatch.Success)
             {
                 throw new InvalidTLSchemaException();
@@ -50,7 +57,7 @@ namespace SharpTL.Compiler
             foreach (Match declarationMatch in DeclarationRegex.Matches(typesPart))
             {
                 string declarationText = declarationMatch.Groups["Declaration"].Value.Trim();
-                uint combinatorNumber = Crc32.Compute(declarationText, _encoding);
+                uint combinatorNumber = Crc32.Compute(declarationText, Encoding.UTF8);
 
                 var declaration = new TLCombinator {Name = declarationMatch.Groups["CombinatorName"].Value.Trim()};
 
@@ -63,10 +70,7 @@ namespace SharpTL.Compiler
                 }
             }
 
-            var sb = new StringBuilder();
-
-
-            return sb.ToString();
+            return null;
         }
 
         private static string RemoveComments(string text)

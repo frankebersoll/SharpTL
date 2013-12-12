@@ -6,7 +6,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using SharpTL.BaseTypes;
 using SharpTL.Serializers;
@@ -24,26 +23,15 @@ namespace SharpTL.Compiler
         private static readonly Regex Int256Regex = new Regex(@"^int256$", RegexOptions.Compiled);
         private static readonly Regex TLBytesRegex = new Regex(@"^bytes$", RegexOptions.Compiled);
         private readonly string _defaultNamespace;
-        private readonly Encoding _encoding;
         private readonly Dictionary<string, TLType> _tlTypesCache = new Dictionary<string, TLType>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TLSchemaCompiler" /> class.
         /// </summary>
         /// <param name="defaultNamespace">Default namespace.</param>
-        protected TLSchemaCompiler(string defaultNamespace) : this(defaultNamespace, Encoding.UTF8)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TLSchemaCompiler" /> class.
-        /// </summary>
-        /// <param name="defaultNamespace">Default namespace.</param>
-        /// <param name="encoding">Default encoding.</param>
-        protected TLSchemaCompiler(string defaultNamespace, Encoding encoding)
+        protected TLSchemaCompiler(string defaultNamespace)
         {
             _defaultNamespace = defaultNamespace;
-            _encoding = encoding;
         }
 
         protected string Compile(TLSchema tlSchema)
