@@ -11,7 +11,7 @@ namespace SharpTL.BaseTypes
     /// <summary>
     ///     Represents a 256-bit unsigned integer.
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
+    [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public struct Int256
     {
         /// <summary>

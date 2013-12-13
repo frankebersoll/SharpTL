@@ -10,11 +10,11 @@ using SharpTL.BaseTypes;
 namespace SharpTL.Serializers
 {
     /// <summary>
-    /// Serializer for 128-bit integer.
+    ///     Serializer for 128-bit integer.
     /// </summary>
     public class Int128Serializer : TLBareTypeSerializerBase
     {
-        private static readonly Type _SupportedType = typeof(Int128);
+        private static readonly Type _SupportedType = typeof (Int128);
 
         public override uint ConstructorNumber
         {
@@ -33,8 +33,7 @@ namespace SharpTL.Serializers
 
         protected override void WriteBody(object obj, TLSerializationContext context)
         {
-            var int128 = (Int128) obj;
-            context.Streamer.WriteULong(int128.L);
+            context.Streamer.WriteInt128((Int128)obj);
         }
     }
 }

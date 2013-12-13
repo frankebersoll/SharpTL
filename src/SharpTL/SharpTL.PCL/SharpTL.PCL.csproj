@@ -47,6 +47,7 @@
     <Compile Include="Serializers\Int128Serializer.cs" />
     <Compile Include="Serializers\Int256Serializer.cs" />
     <Compile Include="Serializers\TLBytesSerializer.cs" />
+    <Compile Include="TLBitConverter.cs" />
     <Compile Include="TLSerializationContext.cs" />
     <Compile Include="Serializers\BooleanSerializer.cs" />
     <Compile Include="Serializers\DoubleSerializer.cs" />

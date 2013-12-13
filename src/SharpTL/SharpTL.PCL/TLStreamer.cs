@@ -129,7 +129,7 @@ namespace SharpTL
             var bytes = new byte[4];
             _stream.Read(bytes, 0, 4);
 
-            return _streamAsLittleEndianInternal ? bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24 : bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
+            return bytes.ToInt32(_streamAsLittleEndianInternal);
         }
 
         /// <summary>
@@ -137,23 +137,7 @@ namespace SharpTL
         /// </summary>
         public void WriteInt(int value)
         {
-            var bytes = new byte[4];
-
-            if (_streamAsLittleEndianInternal)
-            {
-                bytes[0] = (byte) value;
-                bytes[1] = (byte) (value >> 8);
-                bytes[2] = (byte) (value >> 16);
-                bytes[3] = (byte) (value >> 24);
-            }
-            else
-            {
-                bytes[0] = (byte) (value >> 24);
-                bytes[1] = (byte) (value >> 16);
-                bytes[2] = (byte) (value >> 8);
-                bytes[3] = (byte) value;
-            }
-
+            var bytes = value.ToBytes(_streamAsLittleEndianInternal);
             _stream.Write(bytes, 0, 4);
         }
 
@@ -181,11 +165,7 @@ namespace SharpTL
             var bytes = new byte[8];
             _stream.Read(bytes, 0, 8);
 
-            return _streamAsLittleEndianInternal
-                ? bytes[0] | (long) bytes[1] << 8 | (long) bytes[2] << 16 | (long) bytes[3] << 24 | (long) bytes[4] << 32 | (long) bytes[5] << 40 | (long) bytes[6] << 48 |
-                    (long) bytes[7] << 56
-                : (long) bytes[0] << 56 | (long) bytes[1] << 48 | (long) bytes[2] << 40 | (long) bytes[3] << 32 | (long) bytes[4] << 24 | (long) bytes[5] << 16 |
-                    (long) bytes[6] << 8 | bytes[7];
+            return bytes.ToInt64(_streamAsLittleEndianInternal);
         }
 
         /// <summary>
@@ -193,32 +173,7 @@ namespace SharpTL
         /// </summary>
         public void WriteLong(long value)
         {
-            var bytes = new byte[8];
-
-            if (_streamAsLittleEndianInternal)
-            {
-                bytes[0] = (byte) value;
-                bytes[1] = (byte) (value >> 8);
-                bytes[2] = (byte) (value >> 16);
-                bytes[3] = (byte) (value >> 24);
-                bytes[4] = (byte) (value >> 32);
-                bytes[5] = (byte) (value >> 40);
-                bytes[6] = (byte) (value >> 48);
-                bytes[7] = (byte) (value >> 56);
-            }
-            else
-            {
-                bytes[0] = (byte) (value >> 56);
-                bytes[1] = (byte) (value >> 48);
-                bytes[2] = (byte) (value >> 40);
-                bytes[3] = (byte) (value >> 32);
-                bytes[4] = (byte) (value >> 24);
-                bytes[5] = (byte) (value >> 16);
-                bytes[6] = (byte) (value >> 8);
-                bytes[7] = (byte) value;
-            }
-
-            _stream.Write(bytes, 0, 8);
+            _stream.Write(value.ToBytes(_streamAsLittleEndianInternal), 0, 8);
         }
 
         /// <summary>
@@ -254,24 +209,26 @@ namespace SharpTL
         }
 
         /// <summary>
-        ///     Reads a 128-bit unsigned integer.
+        ///     Reads a 128-bit signed integer.
         /// </summary>
         public Int128 ReadInt128()
         {
-            return new Int128 {H = ReadULong(), L = ReadULong()};
+            var buffer = new byte[16];
+            Read(buffer, 0, buffer.Length);
+            return new Int128(buffer);
         }
 
         /// <summary>
-        ///     Writes a 128-bit unsigned integer.
+        ///     Writes a 128-bit signed integer.
         /// </summary>
         public void WriteInt128(Int128 value)
         {
-            WriteULong(value.L);
-            WriteULong(value.H);
+            var buffer = value.ToByteArray(StreamAsLittleEndian);
+            Write(buffer, 0, buffer.Length);
         }
 
         /// <summary>
-        ///     Reads a 256-bit unsigned integer.
+        ///     Reads a 256-bit signed integer.
         /// </summary>
         public Int256 ReadInt256()
         {
@@ -279,7 +236,7 @@ namespace SharpTL
         }
 
         /// <summary>
-        ///     Writes a 128-bit unsigned integer.
+        ///     Writes a 128-bit signed integer.
         /// </summary>
         public void WriteInt256(Int256 value)
         {

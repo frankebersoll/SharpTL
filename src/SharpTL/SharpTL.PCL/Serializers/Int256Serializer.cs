@@ -1,14 +1,20 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Int256Serializer.cs">
+//   Copyright (c) 2013 Alexander Logger. All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+using System;
 using SharpTL.BaseTypes;
 
 namespace SharpTL.Serializers
 {
     /// <summary>
-    /// Serializer for 256-bit integer.
+    ///     Serializer for 256-bit integer.
     /// </summary>
     public class Int256Serializer : TLBareTypeSerializerBase
     {
-        private static readonly Type _SupportedType = typeof(Int128);
+        private static readonly Type _SupportedType = typeof (Int256);
 
         public override uint ConstructorNumber
         {
@@ -22,13 +28,12 @@ namespace SharpTL.Serializers
 
         protected override object ReadBody(TLSerializationContext context)
         {
-            return new Int128 { H = context.Streamer.ReadULong(), L = context.Streamer.ReadULong() };
+            return context.Streamer.ReadInt256();
         }
 
         protected override void WriteBody(object obj, TLSerializationContext context)
         {
-            var int128 = (Int128)obj;
-            context.Streamer.WriteULong(int128.L);
+            context.Streamer.WriteInt256((Int256)obj);
         }
     }
 }
