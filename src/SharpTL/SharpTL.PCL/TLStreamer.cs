@@ -15,7 +15,7 @@ namespace SharpTL
     /// </summary>
     public class TLStreamer : IDisposable
     {
-        private readonly bool _shouldDisposeTheStream;
+        private readonly bool _leaveOpen;
         private bool _disposed;
         private Stream _stream;
         private bool _streamAsLittleEndianInternal = true;
@@ -32,10 +32,19 @@ namespace SharpTL
         ///     Initializes a new instance of the <see cref="TLStreamer" /> class.
         /// </summary>
         /// <param name="stream">Stream.</param>
-        public TLStreamer(Stream stream)
+        public TLStreamer(Stream stream) : this(stream, false)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TLStreamer" /> class.
+        /// </summary>
+        /// <param name="stream">Stream.</param>
+        /// <param name="leaveOpen">Leave underlying stream open.</param>
+        public TLStreamer(Stream stream, bool leaveOpen)
         {
             _stream = stream;
-            _shouldDisposeTheStream = false;
+            _leaveOpen = leaveOpen;
         }
 
         /// <summary>
@@ -45,7 +54,7 @@ namespace SharpTL
         public TLStreamer(byte[] bytes)
         {
             _stream = new MemoryStream(bytes);
-            _shouldDisposeTheStream = true;
+            _leaveOpen = false;
         }
 
         /// <summary>
@@ -364,19 +373,21 @@ namespace SharpTL
 
             if (disposing)
             {
-                if (_stream != null && _shouldDisposeTheStream)
+                if (_stream != null)
                 {
-                    _stream.Dispose();
+                    if (_leaveOpen)
+                    {
+                        _stream.Flush();
+                    }
+                    else
+                    {
+                        _stream.Dispose();
+                    }
+                    _stream = null;
                 }
-                _stream = null;
             }
 
             _disposed = true;
-        }
-
-        ~TLStreamer()
-        {
-            Dispose(false);
         }
         #endregion
     }
