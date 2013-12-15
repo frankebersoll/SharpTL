@@ -6,7 +6,8 @@
 
 using System;
 using System.IO;
-using SharpTL.BaseTypes;
+using BigMath;
+using BigMath.Utils;
 
 namespace SharpTL
 {
@@ -15,7 +16,8 @@ namespace SharpTL
     /// </summary>
     public class TLStreamer : IDisposable
     {
-        private readonly bool _shouldDisposeTheStream;
+        private readonly bool _leaveOpen;
+        private bool _disposed;
         private Stream _stream;
         private bool _streamAsLittleEndianInternal = true;
 
@@ -31,10 +33,19 @@ namespace SharpTL
         ///     Initializes a new instance of the <see cref="TLStreamer" /> class.
         /// </summary>
         /// <param name="stream">Stream.</param>
-        public TLStreamer(Stream stream)
+        public TLStreamer(Stream stream) : this(stream, false)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TLStreamer" /> class.
+        /// </summary>
+        /// <param name="stream">Stream.</param>
+        /// <param name="leaveOpen">Leave underlying stream open.</param>
+        public TLStreamer(Stream stream, bool leaveOpen)
         {
             _stream = stream;
-            _shouldDisposeTheStream = false;
+            _leaveOpen = leaveOpen;
         }
 
         /// <summary>
@@ -44,7 +55,7 @@ namespace SharpTL
         public TLStreamer(byte[] bytes)
         {
             _stream = new MemoryStream(bytes);
-            _shouldDisposeTheStream = true;
+            _leaveOpen = false;
         }
 
         /// <summary>
@@ -74,18 +85,6 @@ namespace SharpTL
         }
 
         /// <summary>
-        ///     Dispose.
-        /// </summary>
-        public void Dispose()
-        {
-            if (_stream != null && _shouldDisposeTheStream)
-            {
-                _stream.Dispose();
-            }
-            _stream = null;
-        }
-
-        /// <summary>
         ///     Reads bytes to a buffer.
         /// </summary>
         /// <param name="buffer">Buffer.</param>
@@ -105,6 +104,18 @@ namespace SharpTL
         public void Write(byte[] buffer, int offset, int count)
         {
             _stream.Write(buffer, offset, count);
+        }
+
+        /// <summary>
+        ///     Reads an array of bytes.
+        /// </summary>
+        /// <param name="count">Count to read.</param>
+        /// <returns>Array of bytes.</returns>
+        public byte[] ReadBytes(int count)
+        {
+            var buffer = new byte[count];
+            Read(buffer, 0, count);
+            return buffer;
         }
 
         /// <summary>
@@ -131,7 +142,7 @@ namespace SharpTL
             var bytes = new byte[4];
             _stream.Read(bytes, 0, 4);
 
-            return _streamAsLittleEndianInternal ? bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24 : bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
+            return bytes.ToInt32(0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
@@ -139,23 +150,7 @@ namespace SharpTL
         /// </summary>
         public void WriteInt(int value)
         {
-            var bytes = new byte[4];
-
-            if (_streamAsLittleEndianInternal)
-            {
-                bytes[0] = (byte) value;
-                bytes[1] = (byte) (value >> 8);
-                bytes[2] = (byte) (value >> 16);
-                bytes[3] = (byte) (value >> 24);
-            }
-            else
-            {
-                bytes[0] = (byte) (value >> 24);
-                bytes[1] = (byte) (value >> 16);
-                bytes[2] = (byte) (value >> 8);
-                bytes[3] = (byte) value;
-            }
-
+            byte[] bytes = value.ToBytes(_streamAsLittleEndianInternal);
             _stream.Write(bytes, 0, 4);
         }
 
@@ -183,11 +178,7 @@ namespace SharpTL
             var bytes = new byte[8];
             _stream.Read(bytes, 0, 8);
 
-            return _streamAsLittleEndianInternal
-                ? bytes[0] | (long) bytes[1] << 8 | (long) bytes[2] << 16 | (long) bytes[3] << 24 | (long) bytes[4] << 32 | (long) bytes[5] << 40 | (long) bytes[6] << 48 |
-                    (long) bytes[7] << 56
-                : (long) bytes[0] << 56 | (long) bytes[1] << 48 | (long) bytes[2] << 40 | (long) bytes[3] << 32 | (long) bytes[4] << 24 | (long) bytes[5] << 16 |
-                    (long) bytes[6] << 8 | bytes[7];
+            return bytes.ToInt64(0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
@@ -195,32 +186,7 @@ namespace SharpTL
         /// </summary>
         public void WriteLong(long value)
         {
-            var bytes = new byte[8];
-
-            if (_streamAsLittleEndianInternal)
-            {
-                bytes[0] = (byte) value;
-                bytes[1] = (byte) (value >> 8);
-                bytes[2] = (byte) (value >> 16);
-                bytes[3] = (byte) (value >> 24);
-                bytes[4] = (byte) (value >> 32);
-                bytes[5] = (byte) (value >> 40);
-                bytes[6] = (byte) (value >> 48);
-                bytes[7] = (byte) (value >> 56);
-            }
-            else
-            {
-                bytes[0] = (byte) (value >> 56);
-                bytes[1] = (byte) (value >> 48);
-                bytes[2] = (byte) (value >> 40);
-                bytes[3] = (byte) (value >> 32);
-                bytes[4] = (byte) (value >> 24);
-                bytes[5] = (byte) (value >> 16);
-                bytes[6] = (byte) (value >> 8);
-                bytes[7] = (byte) value;
-            }
-
-            _stream.Write(bytes, 0, 8);
+            _stream.Write(value.ToBytes(_streamAsLittleEndianInternal), 0, 8);
         }
 
         /// <summary>
@@ -256,41 +222,40 @@ namespace SharpTL
         }
 
         /// <summary>
-        ///     Reads a 128-bit unsigned integer.
+        ///     Reads a 128-bit signed integer.
         /// </summary>
         public Int128 ReadInt128()
         {
-            return new Int128 {H = ReadULong(), L = ReadULong()};
+            return new Int128(ReadBytes(16), 0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
-        ///     Writes a 128-bit unsigned integer.
+        ///     Writes a 128-bit signed integer.
         /// </summary>
         public void WriteInt128(Int128 value)
         {
-            WriteULong(value.L);
-            WriteULong(value.H);
+            byte[] buffer = value.ToByteArray(StreamAsLittleEndian);
+            Write(buffer, 0, buffer.Length);
         }
 
         /// <summary>
-        ///     Reads a 256-bit unsigned integer.
+        ///     Reads a 256-bit signed integer.
         /// </summary>
         public Int256 ReadInt256()
         {
-            return new Int256 {H = ReadInt128(), L = ReadInt128()};
+            return new Int256(ReadBytes(32), 0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
-        ///     Writes a 128-bit unsigned integer.
+        ///     Writes a 256-bit signed integer.
         /// </summary>
         public void WriteInt256(Int256 value)
         {
-            WriteInt128(value.L);
-            WriteInt128(value.H);
+            Write(value.ToByteArray(_streamAsLittleEndianInternal), 0, 32);
         }
 
         /// <summary>
-        /// Reads a bunch of bytes formated as described in TL.
+        ///     Reads a bunch of bytes formated as described in TL.
         /// </summary>
         public byte[] ReadTLBytes()
         {
@@ -304,7 +269,7 @@ namespace SharpTL
             var bytes = new byte[length];
             Read(bytes, 0, length);
 
-            offset = 4 - (offset + length) % 4;
+            offset = 4 - (offset + length)%4;
             if (offset < 4)
             {
                 Position += offset;
@@ -313,7 +278,7 @@ namespace SharpTL
         }
 
         /// <summary>
-        /// Writes a bunch of bytes formated as described in TL.
+        ///     Writes a bunch of bytes formated as described in TL.
         /// </summary>
         /// <param name="bytes">Array of bytes.</param>
         /// <exception cref="ArgumentOutOfRangeException">When array size exceeds </exception>
@@ -323,16 +288,16 @@ namespace SharpTL
             int offset = 1;
             if (length <= 253)
             {
-                WriteByte((byte)length);
+                WriteByte((byte) length);
             }
             else if (length >= 254 && length <= 0xFFFFFF)
             {
                 offset = 4;
                 var lBytes = new byte[4];
                 lBytes[0] = 254;
-                lBytes[1] = (byte)length;
-                lBytes[2] = (byte)(length >> 8);
-                lBytes[3] = (byte)(length >> 16);
+                lBytes[1] = (byte) length;
+                lBytes[2] = (byte) (length >> 8);
+                lBytes[3] = (byte) (length >> 16);
                 Write(lBytes, 0, 4);
             }
             else
@@ -342,11 +307,55 @@ namespace SharpTL
 
             Write(bytes, 0, length);
 
-            offset = 4 - (offset + length) % 4;
+            offset = 4 - (offset + length)%4;
             if (offset < 4)
             {
                 Write(new byte[offset], 0, offset);
             }
         }
+
+        #region Disposing
+        /// <summary>
+        ///     Dispose.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     Dispose.
+        /// </summary>
+        /// <param name="disposing">
+        ///     A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both
+        ///     managed and native resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (_stream != null)
+                {
+                    if (_leaveOpen)
+                    {
+                        _stream.Flush();
+                    }
+                    else
+                    {
+                        _stream.Dispose();
+                    }
+                    _stream = null;
+                }
+            }
+
+            _disposed = true;
+        }
+        #endregion
     }
 }

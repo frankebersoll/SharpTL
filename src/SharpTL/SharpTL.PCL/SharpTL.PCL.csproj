@@ -39,11 +39,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BaseTypes\Int256.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="ITLSerializer.cs" />
     <Compile Include="Serializers\BuiltIn.cs" />
-    <Compile Include="BaseTypes\Int128.cs" />
     <Compile Include="Serializers\Int128Serializer.cs" />
     <Compile Include="Serializers\Int256Serializer.cs" />
     <Compile Include="Serializers\TLBytesSerializer.cs" />
@@ -69,6 +67,12 @@
     <Compile Include="TLTypeAttribute.cs" />
     <Compile Include="TLSerializersBucket.cs" />
     <Compile Include="TLVectorAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BigMath\src\BigMath\BigMath.PCL\BigMath.PCL.csproj">
+      <Project>{e57078c6-c6a2-4a24-8983-840ace910680}</Project>
+      <Name>BigMath.PCL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -63,6 +63,10 @@
     <Compile Include="Utils\Crc32.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BigMath\src\BigMath\BigMath.PCL\BigMath.PCL.csproj">
+      <Project>{e57078c6-c6a2-4a24-8983-840ace910680}</Project>
+      <Name>BigMath.PCL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpTL.PCL\SharpTL.PCL.csproj">
       <Project>{4172ee09-143e-425f-ab10-99db1d41a645}</Project>
       <Name>SharpTL.PCL</Name>

@@ -16,11 +16,15 @@ namespace SharpTL
     /// </summary>
     public class TLRig
     {
+        /// <summary>
+        ///     Default instance of the <see cref="TLRig" /> class.
+        /// </summary>
         public static readonly TLRig Default = new TLRig();
+
         private readonly TLSerializersBucket _serializersBucket;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TLRig"/> class.
+        ///     Initializes a new instance of the <see cref="TLRig" /> class.
         /// </summary>
         public TLRig()
         {
@@ -28,7 +32,7 @@ namespace SharpTL
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TLRig"/> class.
+        ///     Initializes a new instance of the <see cref="TLRig" /> class.
         /// </summary>
         /// <param name="serializersBucket">Serializers bucket.</param>
         public TLRig(TLSerializersBucket serializersBucket)

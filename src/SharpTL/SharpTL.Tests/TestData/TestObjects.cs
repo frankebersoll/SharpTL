@@ -7,7 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using BigMath;
 
 namespace SharpTL.Tests.TestData
 {
@@ -33,6 +35,12 @@ namespace SharpTL.Tests.TestData
         [TLProperty(6)]
         public string TestString { get; set; }
 
+        [TLProperty(7)]
+        public Int128 TestInt128 { get; set; }
+
+        [TLProperty(8)]
+        public Int256 TestInt256 { get; set; }
+
         #region Equality
         public bool Equals(TestObject other)
         {
@@ -45,7 +53,7 @@ namespace SharpTL.Tests.TestData
                 return true;
             }
             return TestBoolean.Equals(other.TestBoolean) && TestDouble.Equals(other.TestDouble) && TestInt == other.TestInt && TestIntVector.SequenceEqual(other.TestIntVector) &&
-                TestLong == other.TestLong && string.Equals(TestString, other.TestString);
+                TestLong == other.TestLong && string.Equals(TestString, other.TestString) && TestInt128 == other.TestInt128 && TestInt256 == other.TestInt256;
         }
 
         public override bool Equals(object obj)
@@ -75,6 +83,8 @@ namespace SharpTL.Tests.TestData
                 hashCode = (hashCode*397) ^ (TestIntVector != null ? TestIntVector.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ TestLong.GetHashCode();
                 hashCode = (hashCode*397) ^ (TestString != null ? TestString.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ TestInt128.GetHashCode();
+                hashCode = (hashCode*397) ^ TestInt256.GetHashCode();
                 return hashCode;
             }
         }
@@ -89,6 +99,11 @@ namespace SharpTL.Tests.TestData
             return !Equals(left, right);
         }
         #endregion
+
+        public override string ToString()
+        {
+            return "TestObject #" + GetHashCode().ToString(CultureInfo.InvariantCulture);
+        }
     }
 
     [TLType(typeof (User), typeof (NoUser))]
@@ -109,9 +124,6 @@ namespace SharpTL.Tests.TestData
 
         [TLProperty(3)]
         public string LastName { get; set; }
-
-        [TLProperty(1)]
-        public int Id { get; set; }
 
         [TLProperty(4)]
         public byte[] Key { get; set; }
@@ -154,7 +166,7 @@ namespace SharpTL.Tests.TestData
                 int hashCode = Id;
                 hashCode = (hashCode*397) ^ (FirstName != null ? FirstName.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (LastName != null ? LastName.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Key != null ? Key.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Key != null ? Key.GetHashCode() : 0);
                 return hashCode;
             }
         }
@@ -169,6 +181,9 @@ namespace SharpTL.Tests.TestData
             return !Equals(left, right);
         }
         #endregion
+
+        [TLProperty(1)]
+        public int Id { get; set; }
     }
 
     /// <summary>

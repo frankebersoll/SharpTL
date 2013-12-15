@@ -28,7 +28,9 @@ namespace SharpTL.Serializers
                 new StringSerializer(),
                 new BooleanSerializer(),
                 new TLVectorSerializer<object>(),
-                new TLBytesSerializer()
+                new TLBytesSerializer(),
+                new Int128Serializer(),
+                new Int256Serializer()
             };
         }
 
