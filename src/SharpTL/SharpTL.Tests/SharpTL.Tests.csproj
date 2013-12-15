@@ -63,6 +63,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BigMath\src\BigMath\BigMath.PCL\BigMath.PCL.csproj">
+      <Project>{e57078c6-c6a2-4a24-8983-840ace910680}</Project>
+      <Name>BigMath.PCL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpTL.Compiler.NET45\SharpTL.Compiler.NET45.csproj">
       <Project>{a02ea59b-e026-437d-8ed9-ad76aca58db6}</Project>
       <Name>SharpTL.Compiler.NET45</Name>

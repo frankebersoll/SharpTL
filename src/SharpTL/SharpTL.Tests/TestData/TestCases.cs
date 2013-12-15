@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BigMath;
 using NUnit.Framework;
 
 namespace SharpTL.Tests.TestData
@@ -62,9 +63,12 @@ namespace SharpTL.Tests.TestData
                         TestInt = Int32.MaxValue,
                         TestIntVector = new List<int> {1, 2, 3, 4, 5},
                         TestLong = Int64.MaxValue,
-                        TestString = "PPP"
-                    }, GetBytes(0xA1B2C3D4, 0x997275b5, Double.Epsilon, Int32.MaxValue, 0x1CB5C415, 5, 1, 2, 3, 4, 5, Int64.MaxValue, 0x50505003),
-                    "TestObject"),
+                        TestString = "PPP",
+                        TestInt128 = Int128.Parse("0x0102030405060708090A0B0C0D0E0F10"),
+                        TestInt256 = Int256.Parse("0x0102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F20")
+                    },
+                    GetBytes(0xA1B2C3D4, 0x997275b5, Double.Epsilon, Int32.MaxValue, 0x1CB5C415, 5, 1, 2, 3, 4, 5, Int64.MaxValue, 0x50505003, 0x090A0B0C0D0E0F10,
+                        0x0102030405060708UL, 0x191A1B1C1D1E1F20, 0x1112131415161718, 0x090A0B0C0D0E0F10, 0x0102030405060708UL), "TestObject"),
 
                 // getUsers([2,3,4])
                 new DataUnit(new GetUsersFunction {Arg1 = new List<int> {2, 3, 4}}, GetBytes(0x2d84d5f5, 0x1cb5c415, 0x3, 0x2, 0x3, 0x4), "GetUsersFunction"),

@@ -6,7 +6,8 @@
 
 using System;
 using System.IO;
-using SharpTL.BaseTypes;
+using BigMath;
+using BigMath.Utils;
 
 namespace SharpTL
 {
@@ -106,6 +107,18 @@ namespace SharpTL
         }
 
         /// <summary>
+        ///     Reads an array of bytes.
+        /// </summary>
+        /// <param name="count">Count to read.</param>
+        /// <returns>Array of bytes.</returns>
+        public byte[] ReadBytes(int count)
+        {
+            var buffer = new byte[count];
+            Read(buffer, 0, count);
+            return buffer;
+        }
+
+        /// <summary>
         ///     Reads byte.
         /// </summary>
         public int ReadByte()
@@ -129,7 +142,7 @@ namespace SharpTL
             var bytes = new byte[4];
             _stream.Read(bytes, 0, 4);
 
-            return bytes.ToInt32(_streamAsLittleEndianInternal);
+            return bytes.ToInt32(0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
@@ -137,7 +150,7 @@ namespace SharpTL
         /// </summary>
         public void WriteInt(int value)
         {
-            var bytes = value.ToBytes(_streamAsLittleEndianInternal);
+            byte[] bytes = value.ToBytes(_streamAsLittleEndianInternal);
             _stream.Write(bytes, 0, 4);
         }
 
@@ -165,7 +178,7 @@ namespace SharpTL
             var bytes = new byte[8];
             _stream.Read(bytes, 0, 8);
 
-            return bytes.ToInt64(_streamAsLittleEndianInternal);
+            return bytes.ToInt64(0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
@@ -213,9 +226,7 @@ namespace SharpTL
         /// </summary>
         public Int128 ReadInt128()
         {
-            var buffer = new byte[16];
-            Read(buffer, 0, buffer.Length);
-            return new Int128(buffer);
+            return new Int128(ReadBytes(16), 0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
@@ -223,7 +234,7 @@ namespace SharpTL
         /// </summary>
         public void WriteInt128(Int128 value)
         {
-            var buffer = value.ToByteArray(StreamAsLittleEndian);
+            byte[] buffer = value.ToByteArray(StreamAsLittleEndian);
             Write(buffer, 0, buffer.Length);
         }
 
@@ -232,16 +243,15 @@ namespace SharpTL
         /// </summary>
         public Int256 ReadInt256()
         {
-            return new Int256 {H = ReadInt128(), L = ReadInt128()};
+            return new Int256(ReadBytes(32), 0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
-        ///     Writes a 128-bit signed integer.
+        ///     Writes a 256-bit signed integer.
         /// </summary>
         public void WriteInt256(Int256 value)
         {
-            WriteInt128(value.L);
-            WriteInt128(value.H);
+            Write(value.ToByteArray(_streamAsLittleEndianInternal), 0, 32);
         }
 
         /// <summary>

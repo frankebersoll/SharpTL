@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
-using SharpTL.BaseTypes;
+using BigMath;
 
 namespace SharpTL.Serializers
 {
