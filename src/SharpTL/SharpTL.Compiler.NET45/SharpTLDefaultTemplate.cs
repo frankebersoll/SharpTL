@@ -78,7 +78,7 @@ foreach (TLType type in _templateVars.Schema.Types)
             
             #line default
             #line hidden
-            this.Write(")]\r\n\tpublic abstract partial class ");
+            this.Write(")]\r\n\tpublic interface ");
             
             #line 39 "D:\Projects\SharpTL\src\SharpTL\SharpTL.Compiler.NET45\SharpTLDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(type.Name));

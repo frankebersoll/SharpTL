@@ -36,7 +36,7 @@ foreach (TLType type in _templateVars.Schema.Types)
 #>
 	[TLType(<#=type.Constructors.Select(constructor => string.Format("typeof({0})", constructor.Name)).Aggregate((s, s1) => s + ", " + s1)
     #>)]
-	public abstract partial class <#=type.Name #>
+	public interface <#=type.Name #>
 	{
 	}
 
