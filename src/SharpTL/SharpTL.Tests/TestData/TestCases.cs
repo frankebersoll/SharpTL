@@ -65,10 +65,18 @@ namespace SharpTL.Tests.TestData
                         TestLong = Int64.MaxValue,
                         TestString = "PPP",
                         TestInt128 = Int128.Parse("0x0102030405060708090A0B0C0D0E0F10"),
-                        TestInt256 = Int256.Parse("0x0102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F20")
+                        TestInt256 = Int256.Parse("0x0102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F20"),
+                        TestUsersVector =
+                            new List<IUser>
+                            {
+                                new User {Id = 2, FirstName = "Pavel", LastName = "Durov", Key = new byte[] {1, 2, 3, 4, 5}},
+                                new NoUser {Id = 3},
+                                new User {Id = 4, FirstName = "Nikolay", LastName = "Durov", Key = new byte[] {6, 7, 8, 9, 10}}
+                            }
                     },
                     GetBytes(0xA1B2C3D4, 0x997275b5, Double.Epsilon, Int32.MaxValue, 0x1CB5C415, 5, 1, 2, 3, 4, 5, Int64.MaxValue, 0x50505003, 0x090A0B0C0D0E0F10,
-                        0x0102030405060708UL, 0x191A1B1C1D1E1F20, 0x1112131415161718, 0x090A0B0C0D0E0F10, 0x0102030405060708UL), "TestObject"),
+                        0x0102030405060708UL, 0x191A1B1C1D1E1F20, 0x1112131415161718, 0x090A0B0C0D0E0F10, 0x0102030405060708UL, 0x1cb5c415, 0x3, 0xd23c81a3, 0x2, 0x76615005, 0x6c65,
+                        0x72754405, 0x766f, 0x03020105, 0x0504, 0xc67599d1, 0x3, 0xd23c81a3, 0x4, 0x6b694e07, 0x79616c6f, 0x72754405, 0x766f, 0x08070605, 0x0A09), "TestObject"),
 
                 // getUsers([2,3,4])
                 new DataUnit(new GetUsersFunction {Arg1 = new List<int> {2, 3, 4}}, GetBytes(0x2d84d5f5, 0x1cb5c415, 0x3, 0x2, 0x3, 0x4), "GetUsersFunction"),

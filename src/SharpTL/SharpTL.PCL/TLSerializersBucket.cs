@@ -124,7 +124,10 @@ namespace SharpTL
                 }
 
                 ITLSingleConstructorSerializer[] serializers =
-                    tlTypeAttribute.ConstructorTypes.Select(type => this[type] as ITLSingleConstructorSerializer).Where(s => s != null).ToArray();
+                    tlTypeAttribute.ConstructorTypes.Where(type => objTypeInfo.IsAssignableFrom(type.GetTypeInfo()))
+                        .Select(type => this[type] as ITLSingleConstructorSerializer)
+                        .Where(s => s != null)
+                        .ToArray();
                 Add(new TLMultiConstructorObjectSerializer(objType, serializers));
 
                 return;

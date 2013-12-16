@@ -49,27 +49,44 @@ namespace SharpTL.Serializers
                 Type propType = propertyInfo.PropertyType;
                 object propertyValue = propertyInfo.GetValue(obj);
 
-                // Check for TLVector attribute.
-                var tlVectorAttribute = tlPropertyInfo.PropertyInfo.GetCustomAttribute<TLVectorAttribute>();
-                if (tlVectorAttribute != null)
+                ITLSerializer tlSerializer = context.Rig.GetSerializerByObjectType(propType);
+
+                if (tlSerializer is ITLVectorSerializer)
                 {
-                    TLSerializationMode? itemsSerializationMode = tlVectorAttribute.ItemsSerializationMode;
+                    var vectorSerializer = tlSerializer as ITLVectorSerializer;
 
-                    var serializer = context.Rig.GetSerializerByObjectType(propType) as ITLVectorSerializer;
-                    if (serializer == null)
+                    if (vectorSerializer.SupportedType != propType)
                     {
-                        throw new NotSupportedException("Vector serializer doesn't implement ITLVectorSerializer interface.");
-                    }
-                    if (serializer.SupportedType != propType)
-                    {
-                        throw new NotSupportedException(string.Format("Current vector serializer doesn't support type: {0}. It supports: {1}", propType, serializer.SupportedType));
+                        throw new NotSupportedException(string.Format("Current vector serializer doesn't support type: {0}. It supports: {1}", propType,
+                            vectorSerializer.SupportedType));
                     }
 
-                    serializer.Write(propertyValue, context, tlPropertyInfo.SerializationModeOverride, itemsSerializationMode);
+                    TLSerializationMode? itemsSerializationModeOverride = TLSerializationMode.Bare;
+
+                    // Check for items serializer.
+                    // If items have multiple constructors or have a TLTypeAttribute (in other words it is TL type),
+                    // then items must be serialized as boxed.
+                    Type itemsType = vectorSerializer.ItemsType;
+                    ITLSerializer vectorItemSerializer = context.Rig.GetSerializerByObjectType(itemsType);
+                    if (vectorItemSerializer is ITLMultiConstructorSerializer || itemsType.GetTypeInfo().GetCustomAttribute<TLTypeAttribute>() != null)
+                    {
+                        itemsSerializationModeOverride = TLSerializationMode.Boxed;
+                    }
+                    else
+                    {
+                        // Check for TLVector attribute with items serialization mode override.
+                        var tlVectorAttribute = tlPropertyInfo.PropertyInfo.GetCustomAttribute<TLVectorAttribute>();
+                        if (tlVectorAttribute != null)
+                        {
+                            itemsSerializationModeOverride = tlVectorAttribute.ItemsSerializationModeOverride;
+                        }
+                    }
+
+                    vectorSerializer.Write(propertyValue, context, tlPropertyInfo.SerializationModeOverride, itemsSerializationModeOverride);
                 }
                 else
                 {
-                    TLRig.Serialize(propertyValue, context, tlPropertyInfo.SerializationModeOverride);
+                    tlSerializer.Write(propertyValue, context, tlPropertyInfo.SerializationModeOverride);
                 }
             }
         }
