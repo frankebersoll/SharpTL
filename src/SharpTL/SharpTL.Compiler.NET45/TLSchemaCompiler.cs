@@ -23,7 +23,7 @@ namespace SharpTL.Compiler
         private static readonly Regex Int256Regex = new Regex(@"^int256$", RegexOptions.Compiled);
         private static readonly Regex TLBytesRegex = new Regex(@"^bytes$", RegexOptions.Compiled);
         private readonly string _defaultNamespace;
-        private readonly Dictionary<string, TLType> _tlTypesCache = new Dictionary<string, TLType>();
+        private readonly Dictionary<string, TLType> _tlTypesCache = new Dictionary<string, TLType> {{"void", new VoidTLType()}};
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TLSchemaCompiler" /> class.
@@ -34,12 +34,21 @@ namespace SharpTL.Compiler
             _defaultNamespace = defaultNamespace;
         }
 
-        protected string Compile(TLSchema tlSchema)
+        protected string Compile(TLSchema schema)
         {
-            SetBuiltInTypeNames(tlSchema);
+            SetBuiltInTypeNames(schema);
+            FixVoidReturns(schema);
 
-            var template = new SharpTLDefaultTemplate(new TemplateVars {Schema = tlSchema, Namespace = _defaultNamespace});
+            var template = new SharpTLDefaultTemplate(new TemplateVars {Schema = schema, Namespace = _defaultNamespace});
             return template.TransformText();
+        }
+
+        private void FixVoidReturns(TLSchema schema)
+        {
+            foreach (var method in schema.Methods.Where(method => !schema.Types.Contains(method.Type)))
+            {
+                method.Type = _tlTypesCache["void"];
+            }
         }
 
         private List<TLType> UpdateAndGetTLTypes(IEnumerable<TLCombinator> constructors)
