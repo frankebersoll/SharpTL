@@ -14,7 +14,7 @@ namespace SharpTL
     /// <summary>
     ///     TL streamer.
     /// </summary>
-    public class TLStreamer : IDisposable
+    public class TLStreamer : Stream
     {
         private readonly bool _leaveOpen;
         private bool _disposed;
@@ -22,11 +22,19 @@ namespace SharpTL
         private bool _streamAsLittleEndianInternal = true;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="TLStreamer" /> class.
+        ///     Initializes a new instance of the <see cref="TLStreamer" /> class with underlying <see cref="MemoryStream" />.
         /// </summary>
-        public TLStreamer()
+        public TLStreamer() : this(new MemoryStream())
         {
-            _stream = new MemoryStream();
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TLStreamer" /> class with underlying <see cref="MemoryStream" /> with
+        ///     an expandable capacity initialized as specified.
+        /// </summary>
+        /// <param name="capacity">The initial size of the internal <see cref="MemoryStream" /> array in bytes.</param>
+        public TLStreamer(int capacity) : this(new MemoryStream(capacity))
+        {
         }
 
         /// <summary>
@@ -52,10 +60,8 @@ namespace SharpTL
         ///     Initializes a new instance of the <see cref="TLStreamer" /> class.
         /// </summary>
         /// <param name="bytes">Bytes.</param>
-        public TLStreamer(byte[] bytes)
+        public TLStreamer(byte[] bytes) : this(new MemoryStream(bytes))
         {
-            _stream = new MemoryStream(bytes);
-            _leaveOpen = false;
         }
 
         /// <summary>
@@ -70,18 +76,42 @@ namespace SharpTL
         /// <summary>
         ///     Current position.
         /// </summary>
-        public long Position
+        public override long Position
         {
             get { return _stream.Position; }
             set { _stream.Position = value; }
         }
 
         /// <summary>
+        ///     Sets a value indicating whether the underlying stream supports writing.
+        /// </summary>
+        public override bool CanWrite
+        {
+            get { return _stream.CanWrite; }
+        }
+
+        /// <summary>
         ///     Length.
         /// </summary>
-        public long Length
+        public override long Length
         {
             get { return _stream.Length; }
+        }
+
+        /// <summary>
+        ///     Gets a value indicating whether the underlying stream supports reading.
+        /// </summary>
+        public override bool CanRead
+        {
+            get { return _stream.CanRead; }
+        }
+
+        /// <summary>
+        ///     Gets a value indicating whether the underlying stream supports seeking.
+        /// </summary>
+        public override bool CanSeek
+        {
+            get { return _stream.CanSeek; }
         }
 
         /// <summary>
@@ -90,9 +120,18 @@ namespace SharpTL
         /// <param name="buffer">Buffer.</param>
         /// <param name="offset">Offset.</param>
         /// <param name="count">Count.</param>
-        public void Read(byte[] buffer, int offset, int count)
+        public override int Read(byte[] buffer, int offset, int count)
         {
-            _stream.Read(buffer, offset, count);
+            return _stream.Read(buffer, offset, count);
+        }
+
+        /// <summary>
+        ///     Sets the length of the underlying stream.
+        /// </summary>
+        /// <param name="value"></param>
+        public override void SetLength(long value)
+        {
+            _stream.SetLength(value);
         }
 
         /// <summary>
@@ -101,7 +140,7 @@ namespace SharpTL
         /// <param name="buffer">Buffer.</param>
         /// <param name="offset">Offset.</param>
         /// <param name="count">Count.</param>
-        public void Write(byte[] buffer, int offset, int count)
+        public override void Write(byte[] buffer, int offset, int count)
         {
             _stream.Write(buffer, offset, count);
         }
@@ -121,15 +160,26 @@ namespace SharpTL
         /// <summary>
         ///     Reads byte.
         /// </summary>
-        public int ReadByte()
+        public override int ReadByte()
         {
             return _stream.ReadByte();
         }
 
         /// <summary>
-        ///     Writes byte.
+        ///     Sets the position within the underlying stream.
         /// </summary>
-        public void WriteByte(byte value)
+        /// <param name="offset"></param>
+        /// <param name="origin"></param>
+        /// <returns></returns>
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            return _stream.Seek(offset, origin);
+        }
+
+        /// <summary>
+        ///     Writes a byte to the current position in the stream and advances the position within the stream by one byte.
+        /// </summary>
+        public override void WriteByte(byte value)
         {
             _stream.WriteByte(value);
         }
@@ -314,16 +364,15 @@ namespace SharpTL
             }
         }
 
-        #region Disposing
         /// <summary>
-        ///     Dispose.
+        ///     Clears all buffers for the underlying stream and causes any buffered data to be written to the underlying device.
         /// </summary>
-        public void Dispose()
+        public override void Flush()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            _stream.Flush();
         }
 
+        #region Disposing
         /// <summary>
         ///     Dispose.
         /// </summary>
@@ -331,7 +380,7 @@ namespace SharpTL
         ///     A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both
         ///     managed and native resources.
         /// </param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (_disposed)
             {
