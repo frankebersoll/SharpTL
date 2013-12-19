@@ -41,6 +41,7 @@
     </Compile>
     <Compile Include="Exceptions.cs" />
     <Compile Include="ITLSerializer.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Serializers\BuiltIn.cs" />
     <Compile Include="Serializers\Int128Serializer.cs" />
     <Compile Include="Serializers\Int256Serializer.cs" />
