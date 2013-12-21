@@ -252,7 +252,12 @@ namespace SharpTL
                 return Deserialize(context);
             }
 
-            return context.Rig.GetSerializerByObjectType(objType).Read(context, modeOverride);
+            ITLSerializer serializer = context.Rig.GetSerializerByObjectType(objType);
+            if (serializer == null)
+            {
+                throw new TLSerializerNotFoundException(string.Format("There is no serializer for a type: '{0}'.", objType.FullName));
+            }
+            return serializer.Read(context, modeOverride);
         }
     }
 }
