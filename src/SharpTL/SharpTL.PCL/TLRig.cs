@@ -199,7 +199,13 @@ namespace SharpTL
         /// <param name="modeOverride">Serialization mode override.</param>
         public static void Serialize(object obj, TLSerializationContext context, TLSerializationMode? modeOverride = null)
         {
-            context.Rig.GetSerializerByObjectType(obj.GetType()).Write(obj, context, modeOverride);
+            var objType = obj.GetType();
+            ITLSerializer serializer = context.Rig.GetSerializerByObjectType(objType);
+            if (serializer == null)
+            {
+                throw new TLSerializerNotFoundException(string.Format("There is no serializer for a type: '{0}'.", objType.FullName));
+            }
+            serializer.Write(obj, context, modeOverride);
         }
 
         /// <summary>
