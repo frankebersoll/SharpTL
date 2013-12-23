@@ -8,7 +8,7 @@ namespace SharpTL.Compiler
 {
     public class VoidTLType : TLType
     {
-        public VoidTLType() : base("void")
+        public VoidTLType() : base("void", false)
         {
         }
     }

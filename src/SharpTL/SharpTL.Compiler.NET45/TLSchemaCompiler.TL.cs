@@ -59,7 +59,7 @@ namespace SharpTL.Compiler
                 string declarationText = declarationMatch.Groups["Declaration"].Value.Trim();
                 uint combinatorNumber = Crc32.Compute(declarationText, Encoding.UTF8);
 
-                var declaration = new TLCombinator {Name = declarationMatch.Groups["CombinatorName"].Value.Trim()};
+                var declaration = new TLCombinator(declarationMatch.Groups["CombinatorName"].Value.Trim());
 
                 Group combinatorNumberMatch = declarationMatch.Groups["CombinatorNumber"];
                 declaration.Number = combinatorNumberMatch.Success ? Convert.ToUInt32(combinatorNumberMatch.Value, 16) : combinatorNumber;

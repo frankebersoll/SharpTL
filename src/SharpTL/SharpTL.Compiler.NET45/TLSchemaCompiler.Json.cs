@@ -47,11 +47,10 @@ namespace SharpTL.Compiler
             return
                 objects.ConvertAll(
                     x =>
-                        new TLCombinator
+                        new TLCombinator(x.Get(nameKey))
                         {
                             Number = (uint) x.JsonTo<int>("id"),
-                            Name = x.Get(nameKey),
-                            Parameters = x.ArrayObjects("params").ConvertAll(param => new TLCombinatorParameter {Name = param.Get("name"), Type = GetTLType(param.Get("type"))}),
+                            Parameters = x.ArrayObjects("params").ConvertAll(param => new TLCombinatorParameter(param.Get("name")) {Type = GetTLType(param.Get("type"))}),
                             Type = GetTLType(x.Get("type"))
                         }).Where(combinator => !HasBuiltInSerializer(combinator.Number)).ToList();
         }

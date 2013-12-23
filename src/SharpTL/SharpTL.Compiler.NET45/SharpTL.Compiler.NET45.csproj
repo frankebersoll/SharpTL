@@ -61,6 +61,7 @@
     <Compile Include="TLSchemaCompiler.cs" />
     <Compile Include="TLType.cs" />
     <Compile Include="Utils\Crc32.cs" />
+    <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="VoidTLType.cs" />
   </ItemGroup>
   <ItemGroup>

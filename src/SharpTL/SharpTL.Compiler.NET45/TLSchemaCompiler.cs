@@ -4,6 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -19,6 +20,8 @@ namespace SharpTL.Compiler
     {
         private static readonly Regex VectorRegex = new Regex(@"^(?:(?<Boxed>V)|(?<Bare>v))ector<(?<ItemsType>%?\w[\w\W-[\s]]*)>$", RegexOptions.Compiled);
         private static readonly Regex BareTypeRegex = new Regex(@"^%(?<Type>\w+)$", RegexOptions.Compiled);
+        private static readonly Regex Int32Regex = new Regex(@"^int$", RegexOptions.Compiled);
+        private static readonly Regex Int64Regex = new Regex(@"^long$", RegexOptions.Compiled);
         private static readonly Regex Int128Regex = new Regex(@"^int128$", RegexOptions.Compiled);
         private static readonly Regex Int256Regex = new Regex(@"^int256$", RegexOptions.Compiled);
         private static readonly Regex TLBytesRegex = new Regex(@"^bytes$", RegexOptions.Compiled);
@@ -107,7 +110,7 @@ namespace SharpTL.Compiler
         private void FixType(TLType type, TLSchema schema)
         {
             List<TLCombinator> constructors = schema.Constructors;
-            string typeName = type.Name;
+            string typeName = type.OriginalName;
 
             // Vector.
             Match match = VectorRegex.Match(typeName);
@@ -115,7 +118,23 @@ namespace SharpTL.Compiler
             {
                 TLType itemsType = GetTLType(match.Groups["ItemsType"].Value);
                 FixType(itemsType, schema);
-                type.BuiltInName = string.Format("System.Collections.Generic.List<{0}>", itemsType.BuiltInName);
+                type.Name = string.Format("System.Collections.Generic.List<{0}>", itemsType.Name);
+                return;
+            }
+
+            // int.
+            match = Int32Regex.Match(typeName);
+            if (match.Success)
+            {
+                type.Name = typeof(UInt32).FullName;
+                return;
+            }
+
+            // long.
+            match = Int64Regex.Match(typeName);
+            if (match.Success)
+            {
+                type.Name = typeof(UInt64).FullName;
                 return;
             }
 
@@ -123,7 +142,7 @@ namespace SharpTL.Compiler
             match = Int128Regex.Match(typeName);
             if (match.Success)
             {
-                type.BuiltInName = typeof (Int128).FullName;
+                type.Name = typeof (Int128).FullName;
                 return;
             }
 
@@ -131,7 +150,7 @@ namespace SharpTL.Compiler
             match = Int256Regex.Match(typeName);
             if (match.Success)
             {
-                type.BuiltInName = typeof (Int256).FullName;
+                type.Name = typeof (Int256).FullName;
                 return;
             }
 
@@ -139,16 +158,16 @@ namespace SharpTL.Compiler
             match = TLBytesRegex.Match(typeName);
             if (match.Success)
             {
-                type.BuiltInName = typeof (byte[]).FullName;
+                type.Name = typeof (byte[]).FullName;
                 return;
             }
 
             // % bare types.
-            match = BareTypeRegex.Match(type.Name);
+            match = BareTypeRegex.Match(typeName);
             if (match.Success)
             {
                 typeName = match.Groups["Type"].Value;
-                type.BuiltInName = constructors.Where(combinator => combinator.Type.Name == typeName).Select(combinator => combinator.Name).SingleOrDefault() ?? typeName;
+                type.Name = constructors.Where(combinator => combinator.Type.Name == typeName).Select(combinator => combinator.Name).SingleOrDefault() ?? typeName;
                 type.SerializationModeOverride = TLSerializationMode.Bare;
             }
         }

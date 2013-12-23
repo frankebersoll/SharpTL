@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics;
+using SharpTL.Compiler.Utils;
 
 namespace SharpTL.Compiler
 {
@@ -17,6 +18,14 @@ namespace SharpTL.Compiler
     {
         private int _lastHashCode;
         private string _text;
+
+        public TLCombinatorParameter(string originalName)
+        {
+            OriginalName = originalName;
+            Name = originalName.ToConventionalCase(Case.PascalCase);
+        }
+
+        public string OriginalName { get; set; }
 
         public string Name { get; set; }
 

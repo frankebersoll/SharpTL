@@ -13,77 +13,96 @@
 // </auto-generated>
 // ------------------------------------------------------------------------------
 
-using SharpTL;
-
 namespace <#=_templateVars.Namespace #>
 {
-	// TL constructors.
+    using SharpTL;
+    using System.Threading.Tasks;
+    
+    // TL constructors.
 
 <#
     // Writing constructors with common types.
-	WriteConstructors(_templateVars.Schema.Constructors, _templateVars.Schema.Types);
-	
-	// Writing constructors without common types, because this is methods.
-	// Hence method constructor is actually bunch of args to a method, which knows how to serialize itself.
-	WriteConstructors(_templateVars.Schema.Methods, null);
+    WriteTLObjects(_templateVars.Schema.Constructors, _templateVars.Schema.Types);
+
+    // Writing constructors without common types, because this is methods.
+    // Hence method constructor is actually bunch of args to a method, which knows how to serialize itself.
+    WriteTLObjects(_templateVars.Schema.Methods, null, true);
 #>
-	
-	// TL types.
+
+    // TL types.
 
 <#
 foreach (TLType type in _templateVars.Schema.Types)
 {
 #>
-	[TLType(<#=type.Constructors.Select(constructor => string.Format("typeof({0})", constructor.Name)).Aggregate((s, s1) => s + ", " + s1)
+    [TLType(<#=type.Constructors.Select(constructor => string.Format("typeof({0})", constructor.Name)).Aggregate((s, s1) => s + ", " + s1)
     #>)]
-	public interface <#=type.Name #>
-	{
-	}
+    public interface <#=type.Name #>
+    {
+    }
 
 <#
 }
 #>
 
-	// TL methods.
-
-	public interface ITLMethods
-	{
+    /// <summary>
+    ///     TL methods.
+    /// </summary>
+    public interface ITLMethods
+    {
 <#
-    foreach (var method in _templateVars.Schema.Methods)
+    foreach (TLCombinator method in _templateVars.Schema.Methods)
     {
 #>
-		<#=method.Type.BuiltInName#> <#=method.Name#>(<#=method.Name#> args);
-<#        
+        <#=method.Type.Name #> <#=method.Name #>(<#=method.Name #>Args args);
+<#
     }
 #>
-	}
+    }
+
+    /// <summary>
+    ///     TL async methods.
+    /// </summary>
+    public interface ITLAsyncMethods
+    {
+<#
+    foreach (TLCombinator method in _templateVars.Schema.Methods)
+    {
+        string returnType = method.Type.IsVoid ? "Task" : String.Format("Task<{0}>", method.Type.Name);
+#>
+        <#=returnType #> <#=method.Name #>Async(<#=method.Name #>Args args);
+<#
+    }
+#>
+    }
 }
 <#+[UsedImplicitly] private TemplateVars _templateVars; #>
 <#+
-private void WriteConstructors(IEnumerable<TLCombinator> constructors, IEnumerable<TLType> types)
+private void WriteTLObjects(IEnumerable<TLCombinator> constructors, IEnumerable<TLType> types, bool isMethodsArgs = false)
 {
     List<TLType> typesList = types != null ? types.ToList() : null;
     foreach (TLCombinator constructor in constructors)
     {
 #>
-	[TLObject(0x<#=constructor.Number.ToString("X8") #>)]
-	public partial class <#=
-    string.Format("{0}{1}", constructor.Name, (typesList != null && typesList.Contains(constructor.Type)) ? " : " + constructor.Type.BuiltInName : String.Empty)
+    [TLObject(0x<#=constructor.Number.ToString("X8") #>)]
+    public partial class <#=
+    string.Format("{0}{1}", isMethodsArgs ? constructor.Name + "Args" : constructor.Name,
+        (typesList != null && typesList.Contains(constructor.Type)) ? " : " + constructor.Type.Name : String.Empty)
     #>
-	{
+    {
 <#+
         int i = 0;
         foreach (TLCombinatorParameter parameter in constructor.Parameters)
         {
             TLSerializationMode? serModeOverride = parameter.Type.SerializationModeOverride;
 #>
-		[TLProperty(<#=++i #><#=serModeOverride.HasValue ? string.Format(", {0}", serModeOverride.Value) : String.Empty #>)]
-		public <#=parameter.Type.BuiltInName #> <#= parameter.Name #> { get; set; }
+        [TLProperty(<#=++i #><#=serModeOverride.HasValue ? string.Format(", {0}", serModeOverride.Value) : String.Empty #>)]
+        public <#=parameter.Type.Name #> <#= parameter.Name #> { get; set; }
 
 <#+
         } 
 #>
-	}
+    }
 
 <#+
     }
