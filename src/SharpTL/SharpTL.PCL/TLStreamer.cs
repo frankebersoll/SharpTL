@@ -318,7 +318,7 @@ namespace SharpTL
         public virtual Int128 ReadInt128()
         {
             FillBuffer(16);
-            return new Int128(_buffer, 0, _streamAsLittleEndianInternal);
+            return _buffer.ToInt128(0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
@@ -336,7 +336,7 @@ namespace SharpTL
         public virtual Int256 ReadInt256()
         {
             FillBuffer(32);
-            return new Int256(_buffer, 0, _streamAsLittleEndianInternal);
+            return _buffer.ToInt256(0, _streamAsLittleEndianInternal);
         }
 
         /// <summary>
