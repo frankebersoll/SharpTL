@@ -409,6 +409,31 @@ namespace SharpTL
         }
 
         /// <summary>
+        ///     Writes random data till the end of an underlying stream.
+        /// </summary>
+        public void WriteRandomDataTillEnd()
+        {
+            WriteRandomData((int) (Length - Position));
+        }
+
+        /// <summary>
+        ///     Writes random data of an underlying stream.
+        /// </summary>
+        /// <param name="length">Length of the data to write.</param>
+        public void WriteRandomData(int length)
+        {
+            if ((Length - Position) < length)
+            {
+                throw new InvalidOperationException("Length of a random data must be less of equal to underlying stream length minus current position.");
+            }
+
+            var buffer = new byte[length];
+            var rnd = new Random();
+            rnd.NextBytes(buffer);
+            WriteAllBytes(buffer);
+        }
+
+        /// <summary>
         ///     Clears all buffers for the underlying stream and causes any buffered data to be written to the underlying device.
         /// </summary>
         public override void Flush()
