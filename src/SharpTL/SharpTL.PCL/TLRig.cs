@@ -104,12 +104,13 @@ namespace SharpTL
         /// </summary>
         /// <typeparam name="T">Type of the object.</typeparam>
         /// <param name="objBytes">Bytes for reading.</param>
+        /// <param name="modeOverride">Serialization mode override.</param>
         /// <returns>Deserialized object.</returns>
-        public T Deserialize<T>(byte[] objBytes)
+        public T Deserialize<T>(byte[] objBytes, TLSerializationMode? modeOverride = null)
         {
             using (var stream = new MemoryStream(objBytes))
             {
-                return Deserialize<T>(stream);
+                return Deserialize<T>(stream, modeOverride);
             }
         }
 
@@ -118,10 +119,11 @@ namespace SharpTL
         /// </summary>
         /// <typeparam name="T">Type of the object.</typeparam>
         /// <param name="stream">Stream for reading.</param>
+        /// <param name="modeOverride">Serialization mode override.</param>
         /// <returns>Deserialized object.</returns>
-        public T Deserialize<T>(Stream stream)
+        public T Deserialize<T>(Stream stream, TLSerializationMode? modeOverride = null)
         {
-            return (T) Deserialize(stream, typeof (T));
+            return (T) Deserialize(stream, typeof (T), modeOverride);
         }
 
         /// <summary>
@@ -129,12 +131,13 @@ namespace SharpTL
         /// </summary>
         /// <param name="objBytes">Bytes for reading.</param>
         /// <param name="objType">Type of the object.</param>
+        /// <param name="modeOverride">Serialization mode override.</param>
         /// <returns>Deserialized object.</returns>
-        public object Deserialize(byte[] objBytes, Type objType)
+        public object Deserialize(byte[] objBytes, Type objType, TLSerializationMode? modeOverride = null)
         {
             using (var stream = new MemoryStream(objBytes))
             {
-                return Deserialize(stream, objType);
+                return Deserialize(stream, objType, modeOverride);
             }
         }
 
@@ -143,12 +146,13 @@ namespace SharpTL
         /// </summary>
         /// <param name="stream">Stream for reading.</param>
         /// <param name="objType">Type of the object.</param>
+        /// <param name="modeOverride">Serialization mode override.</param>
         /// <returns>Deserialized object.</returns>
-        public object Deserialize(Stream stream, Type objType)
+        public object Deserialize(Stream stream, Type objType, TLSerializationMode? modeOverride = null)
         {
             using (var streamer = new TLStreamer(stream))
             {
-                return Deserialize(objType, new TLSerializationContext(this, streamer));
+                return Deserialize(objType, new TLSerializationContext(this, streamer), modeOverride);
             }
         }
 
@@ -238,10 +242,11 @@ namespace SharpTL
         /// </summary>
         /// <typeparam name="T">Type of the object.</typeparam>
         /// <param name="context">TL serialization context.</param>
+        /// <param name="modeOverride">Serialization mode override.</param>
         /// <returns>Deserialized object.</returns>
-        public static T Deserialize<T>(TLSerializationContext context)
+        public static T Deserialize<T>(TLSerializationContext context, TLSerializationMode? modeOverride = null)
         {
-            return (T) Deserialize(typeof (T), context);
+            return (T) Deserialize(typeof (T), context, modeOverride);
         }
 
         /// <summary>
