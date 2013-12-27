@@ -19,6 +19,7 @@ namespace SharpTL
     public class TLStreamer : Stream
     {
         private readonly byte[] _buffer;
+        private readonly byte[] _zeroBuffer = new byte[3];
         private readonly bool _leaveOpen;
         private bool _disposed;
         private Stream _stream;
@@ -404,7 +405,7 @@ namespace SharpTL
             offset = 4 - (offset + length)%4;
             if (offset < 4)
             {
-                Write(new byte[offset], 0, offset);
+                Write(_zeroBuffer, 0, offset);
             }
         }
 
