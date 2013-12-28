@@ -185,7 +185,7 @@ namespace SharpTL
         ///     Writes all bytes from a buffer.
         /// </summary>
         /// <param name="buffer">Buffer.</param>
-        public virtual void WriteAllBytes(byte[] buffer)
+        public virtual void Write(byte[] buffer)
         {
             Write(buffer, 0, buffer.Length);
         }
@@ -431,7 +431,7 @@ namespace SharpTL
             var buffer = new byte[length];
             var rnd = new Random();
             rnd.NextBytes(buffer);
-            WriteAllBytes(buffer);
+            Write(buffer);
         }
 
         /// <summary>
@@ -656,10 +656,10 @@ namespace SharpTL
                     _streamer.WriteByte(b);
             }
 
-            public override void WriteAllBytes(byte[] buffer)
+            public override void Write(byte[] buffer)
             {
                 lock (_streamer)
-                    _streamer.WriteAllBytes(buffer);
+                    _streamer.Write(buffer);
             }
 
             public override byte[] ReadBytes(int count)
