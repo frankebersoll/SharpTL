@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using SharpTL.Compiler.Utils;
 
 namespace SharpTL.Compiler
 {
@@ -19,6 +20,14 @@ namespace SharpTL.Compiler
     {
         private int _lastHashCode;
         private string _text;
+
+        public TLCombinator(string originalName)
+        {
+            OriginalName = originalName;
+            Name = originalName.ToConventionalCase(Case.PascalCase);
+        }
+
+        public string OriginalName { get; set; }
 
         public string Name { get; set; }
 
@@ -84,6 +93,7 @@ namespace SharpTL.Compiler
             {
                 int hashCode = (Name != null ? Name.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (int) Number;
+                hashCode = (hashCode*397) ^ (OriginalName != null ? OriginalName.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Parameters != null ? Parameters.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Type != null ? Type.GetHashCode() : 0);
                 return hashCode;

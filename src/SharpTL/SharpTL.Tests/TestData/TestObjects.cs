@@ -26,7 +26,6 @@ namespace SharpTL.Tests.TestData
         public int TestInt { get; set; }
 
         [TLProperty(4)]
-        [TLVector(TLSerializationMode.Bare)]
         public List<int> TestIntVector { get; set; }
 
         [TLProperty(5)]
@@ -40,6 +39,9 @@ namespace SharpTL.Tests.TestData
 
         [TLProperty(8)]
         public Int256 TestInt256 { get; set; }
+
+        [TLProperty(9)]
+        public List<IUser> TestUsersVector { get; set; }
 
         #region Equality
         public bool Equals(TestObject other)
@@ -119,6 +121,9 @@ namespace SharpTL.Tests.TestData
     [DebuggerDisplay("#{Id} {FirstName} {LastName}")]
     public class User : IUser, IEquatable<User>
     {
+        [TLProperty(1)]
+        public int Id { get; set; }
+
         [TLProperty(2)]
         public string FirstName { get; set; }
 
@@ -181,9 +186,6 @@ namespace SharpTL.Tests.TestData
             return !Equals(left, right);
         }
         #endregion
-
-        [TLProperty(1)]
-        public int Id { get; set; }
     }
 
     /// <summary>
@@ -251,7 +253,6 @@ namespace SharpTL.Tests.TestData
     public class GetUsersFunction : IEquatable<GetUsersFunction>
     {
         [TLProperty(1)]
-        [TLVector(TLSerializationMode.Bare)]
         public List<int> Arg1 { get; set; }
 
         public List<IUser> Response { get; set; }

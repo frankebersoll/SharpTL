@@ -17,15 +17,15 @@ namespace SharpTL
         /// <summary>
         ///     Initializes a new instance of the <see cref="TLVectorAttribute" /> class.
         /// </summary>
-        /// <param name="itemsSerializationMode">Vector items serialization mode.</param>
-        public TLVectorAttribute(TLSerializationMode itemsSerializationMode)
+        /// <param name="itemsSerializationModeOverride">Vector items serialization mode override.</param>
+        public TLVectorAttribute(TLSerializationMode itemsSerializationModeOverride)
         {
-            ItemsSerializationMode = itemsSerializationMode;
+            ItemsSerializationModeOverride = itemsSerializationModeOverride;
         }
 
         /// <summary>
-        ///     Vector items serialization mode.
+        ///     Vector items serialization mode override.
         /// </summary>
-        public TLSerializationMode ItemsSerializationMode { get; private set; }
+        public TLSerializationMode ItemsSerializationModeOverride { get; private set; }
     }
 }

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using SharpTL.Compiler.Utils;
 
 namespace SharpTL.Compiler
 {
@@ -20,16 +21,21 @@ namespace SharpTL.Compiler
         private int _lastHashCode;
         private string _text;
 
-        public TLType(string name)
+        public TLType(string name, bool autoConvertToConventionalCase = true)
         {
-            Name = name;
-            BuiltInName = name;
+            OriginalName = name;
+            Name = autoConvertToConventionalCase ? "I" + name.ToConventionalCase(Case.PascalCase) : name;
             Constructors = new List<TLCombinator>();
         }
 
+        public string OriginalName { get; set; }
+
         public string Name { get; set; }
 
-        public string BuiltInName { get; set; }
+        public bool IsVoid
+        {
+            get { return Name == "void"; }
+        }
 
         public uint? Number
         {
@@ -70,7 +76,7 @@ namespace SharpTL.Compiler
             {
                 return true;
             }
-            return string.Equals(Name, other.Name) && string.Equals(BuiltInName, other.BuiltInName) && Constructors.SequenceEqual(other.Constructors);
+            return string.Equals(OriginalName, other.OriginalName) && string.Equals(Name, other.Name) && Constructors.SequenceEqual(other.Constructors);
         }
 
         public override bool Equals(object obj)
@@ -95,7 +101,7 @@ namespace SharpTL.Compiler
             unchecked
             {
                 int hashCode = (Name != null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (BuiltInName != null ? BuiltInName.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (OriginalName != null ? OriginalName.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Constructors != null ? Constructors.GetHashCode() : 0);
                 return hashCode;
             }

@@ -9,11 +9,6 @@ using System.Collections.Generic;
 
 namespace SharpTL.Serializers
 {
-    public interface ITLVectorSerializer : ITLSerializer
-    {
-        void Write(object vector, TLSerializationContext context, TLSerializationMode? serializationModeOverride, TLSerializationMode? itemsSerializationModeOverride);
-    }
-
     public class TLVectorSerializer<T> : TLBoxedTypeSerializerBase, ITLVectorSerializer
     {
         private const TLSerializationMode DefaultItemsSerializationMode = TLSerializationMode.Boxed;
@@ -29,6 +24,11 @@ namespace SharpTL.Serializers
         public override Type SupportedType
         {
             get { return SupportedTypeInternal; }
+        }
+
+        public Type ItemsType
+        {
+            get { return typeof (T); }
         }
 
         public void Write(object vector, TLSerializationContext context, TLSerializationMode? serializationModeOverride, TLSerializationMode? itemsSerializationModeOverride)
