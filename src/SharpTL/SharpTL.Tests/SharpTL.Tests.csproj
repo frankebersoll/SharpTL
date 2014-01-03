@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Crc32Facts.cs" />
     <Compile Include="StringUtilsFacts.cs" />
     <Compile Include="TLShemaCompilerFacts.cs" />
     <Compile Include="TLStreamerFacts.cs" />
