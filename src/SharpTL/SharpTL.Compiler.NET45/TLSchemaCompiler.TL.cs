@@ -7,7 +7,7 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using SharpTL.Compiler.Utils;
+using BigMath.Utils;
 
 namespace SharpTL.Compiler
 {

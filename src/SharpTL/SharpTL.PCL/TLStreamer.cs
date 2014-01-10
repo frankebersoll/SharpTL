@@ -18,8 +18,9 @@ namespace SharpTL
     /// </summary>
     public class TLStreamer : Stream
     {
-        private readonly byte[] _buffer;
-        private readonly byte[] _zeroBuffer = new byte[3];
+        private const int BufferLength = 32;
+        private readonly byte[] _buffer = new byte[BufferLength];
+        private static readonly byte[] ZeroBuffer = new byte[3];
         private readonly bool _leaveOpen;
         private bool _disposed;
         private Stream _stream;
@@ -63,8 +64,6 @@ namespace SharpTL
 
             _stream = stream;
             _leaveOpen = leaveOpen;
-
-            _buffer = new byte[32];
         }
 
         /// <summary>
@@ -188,6 +187,15 @@ namespace SharpTL
         public virtual void Write(byte[] buffer)
         {
             Write(buffer, 0, buffer.Length);
+        }
+
+        /// <summary>
+        /// Writes all bytes from an array segment.
+        /// </summary>
+        /// <param name="buffer">Array segment.</param>
+        public virtual void Write(ArraySegment<byte> buffer)
+        {
+            Write(buffer.Array, buffer.Offset, buffer.Count);
         }
 
         /// <summary>
@@ -405,7 +413,7 @@ namespace SharpTL
             offset = 4 - (offset + length)%4;
             if (offset < 4)
             {
-                Write(_zeroBuffer, 0, offset);
+                Write(ZeroBuffer, 0, offset);
             }
         }
 
@@ -457,7 +465,7 @@ namespace SharpTL
         /// </exception>
         protected virtual void FillBuffer(int numBytes)
         {
-            if (_buffer != null && (numBytes < 0 || numBytes > _buffer.Length))
+            if (numBytes < 0 || numBytes > BufferLength)
             {
                 throw new ArgumentOutOfRangeException("numBytes");
             }

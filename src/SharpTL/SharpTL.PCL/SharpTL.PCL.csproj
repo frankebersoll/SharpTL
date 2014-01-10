@@ -34,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\SharpTL.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -71,12 +72,19 @@
     <Compile Include="TLVectorAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\BigMath\src\BigMath\BigMath.PCL\BigMath.PCL.csproj">
-      <Project>{e57078c6-c6a2-4a24-8983-840ace910680}</Project>
-      <Name>BigMath.PCL</Name>
-    </ProjectReference>
+    <Reference Include="BigMath">
+      <HintPath>..\packages\BigMath.0.3.1\lib\portable-net45+wp8+win8\BigMath.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy $(TargetPath) $(SolutionDir)SharpTL.NuGetPackager\lib\portable-net45+wp8+win8\ /Y
+xcopy $(TargetDir)$(TargetName).pdb $(SolutionDir)SharpTL.NuGetPackager\lib\portable-net45+wp8+win8\ /Y
+xcopy $(TargetDir)$(TargetName).xml $(SolutionDir)SharpTL.NuGetPackager\lib\portable-net45+wp8+win8\ /Y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
