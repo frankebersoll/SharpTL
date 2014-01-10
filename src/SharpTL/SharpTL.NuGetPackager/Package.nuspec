@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>SharpTL</id>
+    <version>0.4.0</version>
+    <title>SharpTL</title>
+    <authors>Alexander Logger</authors>
+    <owners></owners>
+    <description>
+      Portable class library allows to serialize/deserialize objects defined in Type Language (https://core.telegram.org/mtproto/TL) schemas.
+      Supported platforms:
+
+      .NET Framework 4.5
+      .NET for Windows Store apps
+      .NET for Windows Phone 8 apps
+      Portable Class Libraries
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <summary>
+      The Type Language schema converter and serializer.
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/inTagger/SharpTL</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/inTagger/SharpTL/blob/master/LICENSE.md</licenseUrl>
+    <references></references>
+    <dependencies>
+      <dependency id="BigMath" version="0.3.1" />
+    </dependencies>
+    <tags>TypeLanguage TL Serialization MTProto Telegram</tags>
+  </metadata>
+  <files>
+    <file src="lib\" target="lib" />
+    <file src="tools\" target="tools" />
+    <file src="content\" target="content" />
+    <file src="..\SharpTL.PCL\**\*.cs" target="src\SharpTL.PCL\" />
+  </files>
+</package>
