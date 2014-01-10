@@ -3,7 +3,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>SharpTL</id>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
     <title>SharpTL</title>
     <authors>Alexander Logger</authors>
     <owners></owners>
