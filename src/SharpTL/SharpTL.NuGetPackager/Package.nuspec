@@ -3,7 +3,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>SharpTL</id>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
     <title>SharpTL</title>
     <authors>Alexander Logger</authors>
     <owners></owners>
@@ -35,6 +35,6 @@
     <file src="lib\" target="lib" />
     <file src="tools\" target="tools" />
     <file src="content\" target="content" />
-    <file src="..\SharpTL.PCL\**\*.cs" target="src\SharpTL.PCL\" />
+    <file src="..\SharpTL.PCL\**\*.cs" target="src\SharpTL.PCL\" exclude="**\obj\**" />
   </files>
 </package>
