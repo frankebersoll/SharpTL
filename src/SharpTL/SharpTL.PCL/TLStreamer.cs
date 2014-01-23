@@ -19,8 +19,8 @@ namespace SharpTL
     public class TLStreamer : Stream
     {
         private const int BufferLength = 32;
-        private readonly byte[] _buffer = new byte[BufferLength];
         private static readonly byte[] ZeroBuffer = new byte[3];
+        private readonly byte[] _buffer = new byte[BufferLength];
         private readonly bool _leaveOpen;
         private bool _disposed;
         private Stream _stream;
@@ -190,7 +190,7 @@ namespace SharpTL
         }
 
         /// <summary>
-        /// Writes all bytes from an array segment.
+        ///     Writes all bytes from an array segment.
         /// </summary>
         /// <param name="buffer">Array segment.</param>
         public virtual void Write(ArraySegment<byte> buffer)
@@ -240,7 +240,7 @@ namespace SharpTL
         /// <summary>
         ///     Reads 32-bit signed integer.
         /// </summary>
-        public virtual int ReadInt()
+        public virtual int ReadInt32()
         {
             FillBuffer(4);
             return _buffer.ToInt32(0, _streamAsLittleEndianInternal);
@@ -249,7 +249,7 @@ namespace SharpTL
         /// <summary>
         ///     Writes 32-bit signed integer.
         /// </summary>
-        public virtual void WriteInt(int value)
+        public virtual void WriteInt32(int value)
         {
             value.ToBytes(_buffer, 0, _streamAsLittleEndianInternal);
             _stream.Write(_buffer, 0, 4);
@@ -258,23 +258,23 @@ namespace SharpTL
         /// <summary>
         ///     Reads 32-bit unsigned integer.
         /// </summary>
-        public virtual uint ReadUInt()
+        public virtual uint ReadUInt32()
         {
-            return (uint) ReadInt();
+            return (uint) ReadInt32();
         }
 
         /// <summary>
         ///     Writes 32-bit unsigned integer.
         /// </summary>
-        public virtual void WriteUInt(uint value)
+        public virtual void WriteUInt32(uint value)
         {
-            WriteInt((int) value);
+            WriteInt32((int) value);
         }
 
         /// <summary>
         ///     Reads 64-bit signed integer.
         /// </summary>
-        public virtual long ReadLong()
+        public virtual long ReadInt64()
         {
             FillBuffer(8);
             return _buffer.ToInt64(0, _streamAsLittleEndianInternal);
@@ -283,7 +283,7 @@ namespace SharpTL
         /// <summary>
         ///     Writes 64-bit signed integer.
         /// </summary>
-        public virtual void WriteLong(long value)
+        public virtual void WriteInt64(long value)
         {
             value.ToBytes(_buffer, 0, _streamAsLittleEndianInternal);
             _stream.Write(_buffer, 0, 8);
@@ -292,17 +292,17 @@ namespace SharpTL
         /// <summary>
         ///     Reads 64-bit unsigned integer.
         /// </summary>
-        public virtual ulong ReadULong()
+        public virtual ulong ReadUInt64()
         {
-            return (ulong) ReadLong();
+            return (ulong) ReadInt64();
         }
 
         /// <summary>
         ///     Writes 64-bit unsigned integer.
         /// </summary>
-        public virtual void WriteULong(ulong value)
+        public virtual void WriteUInt64(ulong value)
         {
-            WriteLong((long) value);
+            WriteInt64((long) value);
         }
 
         /// <summary>
@@ -310,7 +310,7 @@ namespace SharpTL
         /// </summary>
         public virtual double ReadDouble()
         {
-            return BitConverter.Int64BitsToDouble(ReadLong());
+            return BitConverter.Int64BitsToDouble(ReadInt64());
         }
 
         /// <summary>
@@ -318,7 +318,7 @@ namespace SharpTL
         /// </summary>
         public virtual void WriteDouble(double value)
         {
-            WriteLong(BitConverter.DoubleToInt64Bits(value));
+            WriteInt64(BitConverter.DoubleToInt64Bits(value));
         }
 
         /// <summary>
@@ -431,6 +431,10 @@ namespace SharpTL
         /// <param name="length">Length of the data to write.</param>
         public void WriteRandomData(int length)
         {
+            if (length <= 0)
+            {
+                return;
+            }
             if ((Length - Position) < length)
             {
                 throw new InvalidOperationException("Length of a random data must be less of equal to underlying stream length minus current position.");
@@ -676,52 +680,52 @@ namespace SharpTL
                     return _streamer.ReadBytes(count);
             }
 
-            public override int ReadInt()
+            public override int ReadInt32()
             {
                 lock (_streamer)
-                    return _streamer.ReadInt();
+                    return _streamer.ReadInt32();
             }
 
-            public override void WriteInt(int value)
+            public override void WriteInt32(int value)
             {
                 lock (_streamer)
-                    _streamer.WriteInt(value);
+                    _streamer.WriteInt32(value);
             }
 
-            public override uint ReadUInt()
+            public override uint ReadUInt32()
             {
                 lock (_streamer)
-                    return _streamer.ReadUInt();
+                    return _streamer.ReadUInt32();
             }
 
-            public override void WriteUInt(uint value)
+            public override void WriteUInt32(uint value)
             {
                 lock (_streamer)
-                    _streamer.WriteUInt(value);
+                    _streamer.WriteUInt32(value);
             }
 
-            public override long ReadLong()
+            public override long ReadInt64()
             {
                 lock (_streamer)
-                    return _streamer.ReadLong();
+                    return _streamer.ReadInt64();
             }
 
-            public override void WriteLong(long value)
+            public override void WriteInt64(long value)
             {
                 lock (_streamer)
-                    _streamer.WriteLong(value);
+                    _streamer.WriteInt64(value);
             }
 
-            public override ulong ReadULong()
+            public override ulong ReadUInt64()
             {
                 lock (_streamer)
-                    return _streamer.ReadULong();
+                    return _streamer.ReadUInt64();
             }
 
-            public override void WriteULong(ulong value)
+            public override void WriteUInt64(ulong value)
             {
                 lock (_streamer)
-                    _streamer.WriteULong(value);
+                    _streamer.WriteUInt64(value);
             }
 
             public override double ReadDouble()

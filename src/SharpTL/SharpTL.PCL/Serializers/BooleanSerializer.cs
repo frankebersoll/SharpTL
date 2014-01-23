@@ -31,7 +31,7 @@ namespace SharpTL.Serializers
         public void Write(object obj, TLSerializationContext context, TLSerializationMode? modeOverride = null)
         {
             var value = (bool) obj;
-            context.Streamer.WriteUInt(value ? TrueConstructorNumber : FalseConstructorNumber);
+            context.Streamer.WriteUInt32(value ? TrueConstructorNumber : FalseConstructorNumber);
         }
 
         public object Read(TLSerializationContext context, TLSerializationMode? modeOverride = null)
@@ -41,7 +41,7 @@ namespace SharpTL.Serializers
                 throw new InvalidOperationException("BooleanSerializer doesn't support bare type serialization.");
             }
 
-            uint constructorNumber = context.Streamer.ReadUInt();
+            uint constructorNumber = context.Streamer.ReadUInt32();
             if (constructorNumber == TrueConstructorNumber)
             {
                 return true;

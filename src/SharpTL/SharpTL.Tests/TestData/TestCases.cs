@@ -110,19 +110,19 @@ namespace SharpTL.Tests.TestData
                         }
                         else if (type == typeof (int))
                         {
-                            streamer.WriteInt((int) value);
+                            streamer.WriteInt32((int) value);
                         }
                         else if (type == typeof (uint))
                         {
-                            streamer.WriteUInt((uint) value);
+                            streamer.WriteUInt32((uint) value);
                         }
                         else if (type == typeof (long))
                         {
-                            streamer.WriteLong((long) value);
+                            streamer.WriteInt64((long) value);
                         }
                         else if (type == typeof (ulong))
                         {
-                            streamer.WriteULong((ulong) value);
+                            streamer.WriteUInt64((ulong) value);
                         }
                         else if (type == typeof (double))
                         {

@@ -35,7 +35,7 @@ namespace SharpTL.Serializers
             if ((!modeOverride.HasValue && SerializationMode != TLSerializationMode.Bare) || (modeOverride.HasValue && modeOverride.Value == TLSerializationMode.Boxed))
             {
                 // If type is boxed (not bare) then read type constructor number and check for supporting.
-                uint constructorNumber = context.Streamer.ReadUInt();
+                uint constructorNumber = context.Streamer.ReadUInt32();
                 if (constructorNumber != ConstructorNumber)
                 {
                     throw new InvalidTLConstructorNumberException(string.Format("Invalid TL constructor number. Expected: {0}, actual: {1}.", ConstructorNumber, constructorNumber));
@@ -55,7 +55,7 @@ namespace SharpTL.Serializers
             if ((!modeOverride.HasValue && SerializationMode != TLSerializationMode.Bare) || (modeOverride.HasValue && modeOverride.Value == TLSerializationMode.Boxed))
             {
                 // If type is boxed (not bare) then write type constructor number.
-                context.Streamer.WriteUInt(ConstructorNumber);
+                context.Streamer.WriteUInt32(ConstructorNumber);
             }
         }
 

@@ -226,7 +226,7 @@ namespace SharpTL
             TLStreamer streamer = context.Streamer;
 
             // Read a constructor number.
-            uint constructorNumber = streamer.ReadUInt();
+            uint constructorNumber = streamer.ReadUInt32();
             ITLSerializer serializer = context.Rig.GetSerializerByConstructorNumber(constructorNumber);
             if (serializer == null)
             {
