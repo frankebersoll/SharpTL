@@ -431,6 +431,10 @@ namespace SharpTL
         /// <param name="length">Length of the data to write.</param>
         public void WriteRandomData(int length)
         {
+            if (length <= 0)
+            {
+                return;
+            }
             if ((Length - Position) < length)
             {
                 throw new InvalidOperationException("Length of a random data must be less of equal to underlying stream length minus current position.");
