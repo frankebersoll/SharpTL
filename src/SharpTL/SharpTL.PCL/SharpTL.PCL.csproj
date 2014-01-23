@@ -81,9 +81,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) $(SolutionDir)SharpTL.NuGetPackager\lib\portable-net45+wp8+win8\ /Y
-xcopy $(TargetDir)$(TargetName).pdb $(SolutionDir)SharpTL.NuGetPackager\lib\portable-net45+wp8+win8\ /Y
-xcopy $(TargetDir)$(TargetName).xml $(SolutionDir)SharpTL.NuGetPackager\lib\portable-net45+wp8+win8\ /Y</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
