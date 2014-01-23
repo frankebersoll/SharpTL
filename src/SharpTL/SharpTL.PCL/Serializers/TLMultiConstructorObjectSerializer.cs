@@ -51,7 +51,7 @@ namespace SharpTL.Serializers
                 throw new InvalidOperationException("TLMultiConstructorObjectSerializer doesn't support bare type deserialization.");
             }
 
-            uint constructorNumber = context.Streamer.ReadUInt();
+            uint constructorNumber = context.Streamer.ReadUInt32();
             ITLSingleConstructorSerializer serializer;
             if (!_serializersConstructorNumberIndex.TryGetValue(constructorNumber, out serializer))
             {

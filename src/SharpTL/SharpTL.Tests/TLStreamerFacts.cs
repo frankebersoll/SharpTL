@@ -37,14 +37,14 @@ namespace SharpTL.Tests
         [TestCase(false)]
         public void Should_write_int(bool streamAsLittleEndian)
         {
-            CheckWriteToStream(stream => stream.WriteInt(TestInt), TestIntBytesInBigEndian, streamAsLittleEndian);
+            CheckWriteToStream(stream => stream.WriteInt32(TestInt), TestIntBytesInBigEndian, streamAsLittleEndian);
         }
 
         [TestCase(true)]
         [TestCase(false)]
         public void Should_write_long(bool streamAsLittleEndian)
         {
-            CheckWriteToStream(stream => stream.WriteLong(TestLong), TestLongBytesInBigEndian, streamAsLittleEndian);
+            CheckWriteToStream(stream => stream.WriteInt64(TestLong), TestLongBytesInBigEndian, streamAsLittleEndian);
         }
 
         [TestCase(true)]
@@ -65,14 +65,14 @@ namespace SharpTL.Tests
         [TestCase(false)]
         public void Should_read_int(bool streamAsLittleEndian)
         {
-            CheckReadFromStream(stream => stream.ReadInt(), TestInt, streamAsLittleEndian ? TestIntBytesInLittleEndian : TestIntBytesInBigEndian, streamAsLittleEndian);
+            CheckReadFromStream(stream => stream.ReadInt32(), TestInt, streamAsLittleEndian ? TestIntBytesInLittleEndian : TestIntBytesInBigEndian, streamAsLittleEndian);
         }
 
         [TestCase(true)]
         [TestCase(false)]
         public void Should_read_long(bool streamAsLittleEndian)
         {
-            CheckReadFromStream(stream => stream.ReadLong(), TestLong, streamAsLittleEndian ? TestLongBytesInLittleEndian : TestLongBytesInBigEndian, streamAsLittleEndian);
+            CheckReadFromStream(stream => stream.ReadInt64(), TestLong, streamAsLittleEndian ? TestLongBytesInLittleEndian : TestLongBytesInBigEndian, streamAsLittleEndian);
         }
 
         [TestCase(true)]

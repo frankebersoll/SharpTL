@@ -24,12 +24,12 @@ namespace SharpTL.Serializers
 
         protected override object ReadBody(TLSerializationContext context)
         {
-            return context.Streamer.ReadUInt();
+            return context.Streamer.ReadUInt32();
         }
 
         protected override void WriteBody(object obj, TLSerializationContext context)
         {
-            context.Streamer.WriteUInt((uint) obj);
+            context.Streamer.WriteUInt32((uint) obj);
         }
     }
 }

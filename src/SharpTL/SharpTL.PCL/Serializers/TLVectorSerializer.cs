@@ -39,7 +39,7 @@ namespace SharpTL.Serializers
 
         protected override object ReadBody(TLSerializationContext context)
         {
-            int length = context.Streamer.ReadInt();
+            int length = context.Streamer.ReadInt32();
             var list = (List<T>) Activator.CreateInstance(SupportedTypeInternal, length);
 
             for (int i = 0; i < length; i++)
@@ -67,7 +67,7 @@ namespace SharpTL.Serializers
             int length = vector.Count;
 
             // Length.
-            context.Streamer.WriteInt(length);
+            context.Streamer.WriteInt32(length);
 
             // Child objects.
             for (int i = 0; i < length; i++)
