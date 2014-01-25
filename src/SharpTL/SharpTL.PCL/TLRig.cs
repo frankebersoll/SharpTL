@@ -201,6 +201,7 @@ namespace SharpTL
         /// <param name="obj">The object.</param>
         /// <param name="context">TL serialization context.</param>
         /// <param name="modeOverride">Serialization mode override.</param>
+        /// <exception cref="TLSerializerNotFoundException">When serializer not found.</exception>
         public static void Serialize(object obj, TLSerializationContext context, TLSerializationMode? modeOverride = null)
         {
             var objType = obj.GetType();
@@ -221,6 +222,7 @@ namespace SharpTL
         /// </remarks>
         /// <param name="context">TL serialization context.</param>
         /// <returns>Deserialized object.</returns>
+        /// <exception cref="TLSerializerNotFoundException">When serializer not found.</exception>
         public static object Deserialize(TLSerializationContext context)
         {
             TLStreamer streamer = context.Streamer;
@@ -230,7 +232,7 @@ namespace SharpTL
             ITLSerializer serializer = context.Rig.GetSerializerByConstructorNumber(constructorNumber);
             if (serializer == null)
             {
-                throw new NotSupportedException(string.Format("Constructor number: 0x{0:X8} is not supported by any registered serializer.", constructorNumber));
+                throw new TLSerializerNotFoundException(string.Format("Constructor number: 0x{0:X8} is not supported by any registered serializer.", constructorNumber));
             }
 
             // Bare because construction number has already been read.
@@ -256,6 +258,7 @@ namespace SharpTL
         /// <param name="context">TL serialization context.</param>
         /// <param name="modeOverride">Serialization mode override.</param>
         /// <returns>Deserialized object.</returns>
+        /// <exception cref="TLSerializerNotFoundException">When serializer not found.</exception>
         public static object Deserialize(Type objType, TLSerializationContext context, TLSerializationMode? modeOverride = null)
         {
             if (objType == typeof (object))
