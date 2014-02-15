@@ -31,29 +31,40 @@ namespace SharpTL.Serializers
             get { return typeof (T); }
         }
 
-        public void Write(object vector, TLSerializationContext context, TLSerializationMode? serializationModeOverride, TLSerializationMode? itemsSerializationModeOverride)
+        public void Write(object vector, TLSerializationContext context, TLSerializationMode? modeOverride, TLSerializationMode? itemsModeOverride)
         {
-            WriteHeader(context, serializationModeOverride);
-            WriteBodyInternal(vector, context, itemsSerializationModeOverride);
+            WriteHeader(context, modeOverride);
+            WriteBodyInternal(vector, context, itemsModeOverride);
+        }
+
+        public object Read(TLSerializationContext context, TLSerializationMode? modeOverride, TLSerializationMode? itemsModeOverride)
+        {
+            ReadAndCheckConstructorNumber(context, modeOverride);
+            return ReadBodyInternal(context, itemsModeOverride);
         }
 
         protected override object ReadBody(TLSerializationContext context)
         {
-            int length = context.Streamer.ReadInt32();
-            var list = (List<T>) Activator.CreateInstance(SupportedTypeInternal, length);
-
-            for (int i = 0; i < length; i++)
-            {
-                var item = TLRig.Deserialize<T>(context);
-                list.Add(item);
-            }
-
-            return list;
+            return ReadBodyInternal(context, DefaultItemsSerializationMode);
         }
 
         protected override void WriteBody(object obj, TLSerializationContext context)
         {
             WriteBodyInternal(obj, context, DefaultItemsSerializationMode);
+        }
+
+        private object ReadBodyInternal(TLSerializationContext context, TLSerializationMode? itemsSerializationModeOverride = null)
+        {
+            int length = context.Streamer.ReadInt32();
+            var list = (List<T>)Activator.CreateInstance(SupportedTypeInternal, length);
+
+            for (int i = 0; i < length; i++)
+            {
+                var item = TLRig.Deserialize<T>(context, itemsSerializationModeOverride);
+                list.Add(item);
+            }
+
+            return list;
         }
 
         private void WriteBodyInternal(object obj, TLSerializationContext context, TLSerializationMode? itemsSerializationModeOverride = null)
