@@ -22,9 +22,9 @@
       The Type Language schema converter and serializer.
     </summary>
     <language>en-US</language>
-    <projectUrl>https://github.com/inTagger/SharpTL</projectUrl>
+    <projectUrl>https://github.com/Taggersoft/SharpTL</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <licenseUrl>https://github.com/inTagger/SharpTL/blob/master/LICENSE.md</licenseUrl>
+    <licenseUrl>https://github.com/Taggersoft/SharpTL/blob/master/LICENSE.md</licenseUrl>
     <references></references>
     <dependencies>
       <dependency id="BigMath" version="0.4.1" />
