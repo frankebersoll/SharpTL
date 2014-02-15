@@ -119,6 +119,10 @@ namespace SharpTL.Compiler
                 TLType itemsType = GetTLType(match.Groups["ItemsType"].Value);
                 FixType(itemsType, schema);
                 type.Name = string.Format("System.Collections.Generic.List<{0}>", itemsType.Name);
+                if (match.Groups["Bare"].Success)
+                {
+                    type.SerializationModeOverride = TLSerializationMode.Bare;
+                }
                 return;
             }
 

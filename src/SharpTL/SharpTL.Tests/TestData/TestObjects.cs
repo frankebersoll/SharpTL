@@ -43,6 +43,9 @@ namespace SharpTL.Tests.TestData
         [TLProperty(9)]
         public List<IUser> TestUsersVector { get; set; }
 
+        [TLProperty(10, TLSerializationMode.Bare)]
+        public List<int> TestIntBareVector { get; set; }
+
         #region Equality
         public bool Equals(TestObject other)
         {
