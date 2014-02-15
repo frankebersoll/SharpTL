@@ -13,7 +13,11 @@ namespace SharpTL.Serializers
     /// </summary>
     public abstract class TLSerializerBase : ITLSingleConstructorSerializer
     {
+        /// <summary>
+        ///     Serialization mode.
+        /// </summary>
         public TLSerializationMode SerializationMode { get; protected set; }
+
         public abstract uint ConstructorNumber { get; }
 
         public abstract Type SupportedType { get; }
@@ -32,17 +36,28 @@ namespace SharpTL.Serializers
 
         public virtual object Read(TLSerializationContext context, TLSerializationMode? modeOverride = null)
         {
+            ReadAndCheckConstructorNumber(context, modeOverride);
+            return ReadBody(context);
+        }
+
+        /// <summary>
+        ///     Reads and checks constructor number.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="modeOverride">Mode override.</param>
+        /// <exception cref="InvalidTLConstructorNumberException">When actual constructor number is not as expected.</exception>
+        protected void ReadAndCheckConstructorNumber(TLSerializationContext context, TLSerializationMode? modeOverride = null)
+        {
             if ((!modeOverride.HasValue && SerializationMode != TLSerializationMode.Bare) || (modeOverride.HasValue && modeOverride.Value == TLSerializationMode.Boxed))
             {
                 // If type is boxed (not bare) then read type constructor number and check for supporting.
                 uint constructorNumber = context.Streamer.ReadUInt32();
                 if (constructorNumber != ConstructorNumber)
                 {
-                    throw new InvalidTLConstructorNumberException(string.Format("Invalid TL constructor number. Expected: {0}, actual: {1}.", ConstructorNumber, constructorNumber));
+                    throw new InvalidTLConstructorNumberException(string.Format("Invalid TL constructor number. Expected: {0}, actual: {1}.", ConstructorNumber,
+                        constructorNumber));
                 }
             }
-
-            return ReadBody(context);
         }
 
         /// <summary>

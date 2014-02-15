@@ -23,8 +23,17 @@ namespace SharpTL
         /// </summary>
         /// <param name="vector">Vector.</param>
         /// <param name="context">Serialization context.</param>
-        /// <param name="serializationModeOverride">Serialization mode override.</param>
-        /// <param name="itemsSerializationModeOverride">Items serialization mode override.</param>
-        void Write(object vector, TLSerializationContext context, TLSerializationMode? serializationModeOverride, TLSerializationMode? itemsSerializationModeOverride);
+        /// <param name="modeOverride">Serialization mode override.</param>
+        /// <param name="itemsModeOverride">Items serialization mode override.</param>
+        void Write(object vector, TLSerializationContext context, TLSerializationMode? modeOverride, TLSerializationMode? itemsModeOverride);
+
+        /// <summary>
+        ///     Writes vector to the serialization context.
+        /// </summary>
+        /// <param name="context">Serialization context.</param>
+        /// <param name="modeOverride">Serialization mode override.</param>
+        /// <param name="itemsModeOverride">Items serialization mode override.</param>
+        /// <returns>Verctor.</returns>
+        object Read(TLSerializationContext context, TLSerializationMode? modeOverride, TLSerializationMode? itemsModeOverride);
     }
 }
