@@ -205,11 +205,8 @@ namespace SharpTL
         public static void Serialize(object obj, TLSerializationContext context, TLSerializationMode? modeOverride = null)
         {
             var objType = obj.GetType();
+
             ITLSerializer serializer = context.Rig.GetSerializerByObjectType(objType);
-            if (serializer == null)
-            {
-                throw new TLSerializerNotFoundException(string.Format("There is no serializer for a type: '{0}'.", objType.FullName));
-            }
             serializer.Write(obj, context, modeOverride);
         }
 
@@ -225,18 +222,17 @@ namespace SharpTL
         /// <exception cref="TLSerializerNotFoundException">When serializer not found.</exception>
         public static object Deserialize(TLSerializationContext context)
         {
+            // Here streamer's position must point to a boxed TL type.
             TLStreamer streamer = context.Streamer;
 
-            // Read a constructor number.
+            // Read a constructor number and restore the streamer position.
+            streamer.PushPosition();
             uint constructorNumber = streamer.ReadUInt32();
-            ITLSerializer serializer = context.Rig.GetSerializerByConstructorNumber(constructorNumber);
-            if (serializer == null)
-            {
-                throw new TLSerializerNotFoundException(string.Format("Constructor number: 0x{0:X8} is not supported by any registered serializer.", constructorNumber));
-            }
+            streamer.PopPosition();
 
-            // Bare because construction number has already been read.
-            return serializer.Read(context, TLSerializationMode.Bare);
+            ITLSerializer serializer = context.Rig.GetSerializerByConstructorNumber(constructorNumber);
+            
+            return serializer.Read(context, TLSerializationMode.Boxed);
         }
 
         /// <summary>

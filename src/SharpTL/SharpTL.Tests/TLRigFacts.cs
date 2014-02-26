@@ -61,7 +61,7 @@ namespace SharpTL.Tests
         [Test]
         public void Should_throw_not_supported_exception()
         {
-            new object().Invoking(o => TLRig.Default.Serialize(o, new MemoryStream(0))).ShouldThrow<NotSupportedException>();
+            new object().Invoking(o => TLRig.Default.Serialize(o, new MemoryStream(0))).ShouldThrow<TLSerializerNotFoundException>();
         }
     }
 }
