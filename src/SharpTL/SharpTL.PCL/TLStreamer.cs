@@ -95,6 +95,14 @@ namespace SharpTL
         }
 
         /// <summary>
+        ///     Bytes till end.
+        /// </summary>
+        public virtual long BytesTillEnd
+        {
+            get { return Length - Position; }
+        }
+
+        /// <summary>
         ///     Sets a value indicating whether the underlying stream supports writing.
         /// </summary>
         public override bool CanWrite
