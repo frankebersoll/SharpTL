@@ -63,5 +63,16 @@ namespace SharpTL.Tests
         {
             new object().Invoking(o => TLRig.Default.Serialize(o, new MemoryStream(0))).ShouldThrow<TLSerializerNotFoundException>();
         }
+
+        [Test]
+        public void Should_serialize_object_with_custom_serializer()
+        {
+            var obj = new TestCustomSerializerObject(100500, 9, "Does anybody really know the secret?");
+            var objBytes = TLRig.Default.Serialize(obj);
+            var deserializedObj = TLRig.Default.Deserialize(objBytes);
+            deserializedObj.Should().BeOfType(typeof (TestCustomSerializerObject));
+            var actualObj = deserializedObj as TestCustomSerializerObject;
+            actualObj.ShouldBeEquivalentTo(obj);
+        }
     }
 }
