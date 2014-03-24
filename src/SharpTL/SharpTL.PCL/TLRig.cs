@@ -26,9 +26,17 @@ namespace SharpTL
         /// <summary>
         ///     Initializes a new instance of the <see cref="TLRig" /> class.
         /// </summary>
-        public TLRig()
+        public TLRig() : this(false)
         {
-            _serializersBucket = new TLSerializersBucket();
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TLRig" /> class.
+        /// </summary>
+        /// <param name="isDurovMode">In Durov mode Bytes is an alias for String type hence both serializers have the same constructor numbers.</param>
+        public TLRig(bool isDurovMode)
+        {
+            _serializersBucket = new TLSerializersBucket(isDurovMode);
         }
 
         /// <summary>

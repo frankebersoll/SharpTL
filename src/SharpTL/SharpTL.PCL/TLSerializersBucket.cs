@@ -26,15 +26,23 @@ namespace SharpTL
         /// <summary>
         /// Initializes a new instance of the <see cref="TLSerializersBucket"/> class.
         /// </summary>
-        public TLSerializersBucket()
+        public TLSerializersBucket() : this(false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TLSerializersBucket"/> class.
+        /// </summary>
+        /// <param name="isDurovMode">In Durov mode Bytes is an alias for String type hence both serializers have the same constructor numbers.</param>
+        public TLSerializersBucket(bool isDurovMode)
         {
             // Add base type serializers.
-            foreach (var serializer in BuiltIn.BaseTypeSerializers)
+            foreach (var serializer in isDurovMode ? BuiltIn.DurovBaseTypeSerializers : BuiltIn.BaseTypeSerializers)
             {
                 Add(serializer);
             }
         }
-
+        
         /// <summary>
         ///     Get TL serializer for an object type.
         /// </summary>
