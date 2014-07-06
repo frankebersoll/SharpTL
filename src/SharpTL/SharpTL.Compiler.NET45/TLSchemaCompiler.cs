@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BigMath;
+using SharpTL.BaseTypes;
 using SharpTL.Serializers;
 
 namespace SharpTL.Compiler
@@ -20,11 +21,15 @@ namespace SharpTL.Compiler
     {
         private static readonly Regex VectorRegex = new Regex(@"^(?:(?<Boxed>V)|(?<Bare>v))ector<(?<ItemsType>%?\w[\w\W-[\s]]*)>$", RegexOptions.Compiled);
         private static readonly Regex BareTypeRegex = new Regex(@"^%(?<Type>\w+)$", RegexOptions.Compiled);
+        private static readonly Regex BoolRegex = new Regex(@"^Bool$", RegexOptions.Compiled);
         private static readonly Regex Int32Regex = new Regex(@"^int$", RegexOptions.Compiled);
         private static readonly Regex Int64Regex = new Regex(@"^long$", RegexOptions.Compiled);
         private static readonly Regex Int128Regex = new Regex(@"^int128$", RegexOptions.Compiled);
         private static readonly Regex Int256Regex = new Regex(@"^int256$", RegexOptions.Compiled);
+        private static readonly Regex DoubleRegex = new Regex(@"^double", RegexOptions.Compiled);
         private static readonly Regex TLBytesRegex = new Regex(@"^bytes$", RegexOptions.Compiled);
+        private static readonly Regex StringRegex = new Regex(@"^string$", RegexOptions.Compiled);
+        private static readonly Regex ObjectRegex = new Regex(@"^(?:Object)|(?:!X)$", RegexOptions.Compiled);
         private readonly string _defaultNamespace;
         private readonly Dictionary<string, TLType> _tlTypesCache = new Dictionary<string, TLType> {{"void", new VoidTLType()}};
 
@@ -39,8 +44,8 @@ namespace SharpTL.Compiler
 
         protected string Compile(TLSchema schema)
         {
-            SetBuiltInTypeNames(schema);
-            FixVoidReturns(schema);
+            this.FixProperties(schema);
+            this.FixVoidReturns(schema);
 
             var template = new SharpTLDefaultTemplate(new TemplateVars {Schema = schema, Namespace = _defaultNamespace});
             return template.TransformText();
@@ -69,7 +74,8 @@ namespace SharpTL.Compiler
                     types.Add(type);
                 }
             }
-            return types;
+
+            return types.Where(this.FilterType).ToList();
         }
 
         private static string GetBuiltInTypeName(uint constructorNumber)
@@ -99,11 +105,48 @@ namespace SharpTL.Compiler
             return type;
         }
 
-        private void SetBuiltInTypeNames(TLSchema schema)
+        private void FixProperties(TLSchema schema)
         {
-            foreach (TLCombinatorParameter parameter in schema.Constructors.SelectMany(constructor => constructor.Parameters))
+            foreach (var combinator in schema.Constructors.Concat(schema.Methods))
             {
-                FixType(parameter.Type, schema);
+                foreach (var parameter in combinator.Parameters)
+                {
+                    this.FixType(parameter.Type, schema);
+                    this.FixName(parameter, combinator);
+                }
+            }
+        }
+
+        private bool FilterConstructor(TLCombinator combinator)
+        {
+            return combinator.OriginalName != "null";
+        }
+
+        private bool FilterType(TLType type)
+        {
+            return type.OriginalName != "Object";
+        }
+
+        private void FixName(TLCombinatorParameter parameter, TLCombinator combinator)
+        {
+            var parameterName = parameter.Name;
+            var combinatorName = combinator.Name;
+
+            if (combinatorName != parameterName)
+            {
+                return;
+            }
+
+            var type = combinator.Type;
+            var parameters = type.Constructors
+                                 .SelectMany(c => c.Parameters)
+                                 .Where(p => p == parameter)
+                                 .ToArray();
+
+
+            foreach (var p in parameters)
+            {
+                p.Name += "_";
             }
         }
 
@@ -111,6 +154,11 @@ namespace SharpTL.Compiler
         {
             List<TLCombinator> constructors = schema.Constructors;
             string typeName = type.OriginalName;
+
+            if (typeName.Contains("X"))
+            {
+                
+            }
 
             // Vector.
             Match match = VectorRegex.Match(typeName);
@@ -126,11 +174,27 @@ namespace SharpTL.Compiler
                 return;
             }
 
+            // bool.
+            match = BoolRegex.Match(typeName);
+            if (match.Success)
+            {
+                type.Name = typeof(bool).FullName;
+                return;
+            }
+
             // int.
             match = Int32Regex.Match(typeName);
             if (match.Success)
             {
                 type.Name = typeof(UInt32).FullName;
+                return;
+            }
+
+            // double.
+            match = DoubleRegex.Match(typeName);
+            if (match.Success)
+            {
+                type.Name = typeof(double).FullName;
                 return;
             }
 
@@ -163,6 +227,22 @@ namespace SharpTL.Compiler
             if (match.Success)
             {
                 type.Name = typeof (byte[]).FullName;
+                return;
+            }
+
+            // string.
+            match = StringRegex.Match(typeName);
+            if (match.Success)
+            {
+                type.Name = typeof(string).FullName;
+                return;
+            }
+
+            // object.
+            match = ObjectRegex.Match(typeName);
+            if (match.Success)
+            {
+                type.Name = typeof(ITLObject).FullName;
                 return;
             }
 

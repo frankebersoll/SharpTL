@@ -17,6 +17,7 @@
 namespace <#=_templateVars.Namespace #>
 {
     using SharpTL;
+	using SharpTL.BaseTypes;
     using System.Threading.Tasks;
     
     // TL constructors.
@@ -38,8 +39,16 @@ foreach (TLType type in _templateVars.Schema.Types)
 #>
     [TLType(<#=type.Constructors.Select(constructor => string.Format("typeof({0})", constructor.Name)).Aggregate((s, s1) => s + ", " + s1)
     #>)]
-    public interface <#=type.Name #>
+    public interface <#=type.Name #> : ITLObject
     {
+<#
+foreach (var parameter in type.Parameters)
+{
+#>
+		<#=parameter.Type.Name #> <#= parameter.Name #> { get; }
+<#
+}
+#>
     }
 
 <#
@@ -89,7 +98,7 @@ private void WriteTLObjects(IEnumerable<TLCombinator> constructors, IEnumerable<
     [TLObject(0x<#=constructor.Number.ToString("X8") #>)]
     public partial class <#=
     string.Format("{0}{1}", isMethodsArgs ? constructor.Name + "Args" : constructor.Name,
-        (typesList != null && typesList.Contains(constructor.Type)) ? " : " + constructor.Type.Name : String.Empty)
+        (typesList != null && typesList.Contains(constructor.Type)) ? " : " + constructor.Type.Name : " : ITLObject")
     #>
     {
 <#+

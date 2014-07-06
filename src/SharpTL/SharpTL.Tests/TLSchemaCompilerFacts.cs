@@ -1,19 +1,21 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TLShemaCompilerFacts.cs">
+// <copyright file="TLSchemaCompilerFacts.cs">
 //   Copyright (c) 2013 Alexander Logger. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 using System;
 using System.IO;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using SharpTL.BaseTypes;
 using SharpTL.Compiler;
 
 namespace SharpTL.Tests
 {
     [TestFixture]
-    public class TLShemaCompilerFacts
+    public class TLSchemaCompilerFacts
     {
         private static string GetTestTLSchema()
         {
@@ -29,6 +31,7 @@ namespace SharpTL.Tests
         public void Should_compile_TL_schema()
         {
             string sharpTLSchemaCode = TLSchemaCompiler.CompileFromJson(GetTestTLJsonSchema(), "SharpTL.TestNamespace");
+
             sharpTLSchemaCode.Should().NotBeNullOrEmpty();
         }
     }

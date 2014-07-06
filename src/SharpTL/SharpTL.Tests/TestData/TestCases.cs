@@ -23,7 +23,11 @@ namespace SharpTL.Tests.TestData
 
         public static IEnumerable DeserializationTestCasesData
         {
-            get { return GetData().Select(dataUnit => new TestCaseData(dataUnit.Bytes, dataUnit.Object.GetType()).Returns(dataUnit.Object).SetName(dataUnit.Name)); }
+            get { return GetData().Select(dataUnit => new TestCaseData(dataUnit.Bytes, 
+                dataUnit.Object == null 
+                ? typeof(object) 
+                : dataUnit.Object.GetType())
+                .Returns(dataUnit.Object).SetName(dataUnit.Name)); }
         }
 
         private static IEnumerable<DataUnit> GetData()
@@ -46,6 +50,7 @@ namespace SharpTL.Tests.TestData
                 new DataUnit(double.NegativeInfinity, GetBytes(double.NegativeInfinity)),
                 new DataUnit(true, GetBytes(0x997275b5)),
                 new DataUnit(false, GetBytes(0xbc799737)),
+                new DataUnit(null, GetBytes(0x56730bcc), "null"),
                 new DataUnit("P", GetBytes(0x5001)),
                 new DataUnit("Pa", GetBytes(0x615002)),
                 new DataUnit("Pav", GetBytes(0x76615003)),
@@ -73,12 +78,17 @@ namespace SharpTL.Tests.TestData
                                 new NoUser {Id = 3},
                                 new User {Id = 4, FirstName = "Nikolay", LastName = "Durov", Key = new byte[] {6, 7, 8, 9, 10}}
                             },
-                        TestIntBareVector = new List<int> {9, 99, 999, 9999, 99999, 999999}
+                        TestIntBareVector = new List<int> {9, 99, 999, 9999, 99999, 999999},
+                        TestNestedObject = new User
+                                           {
+                                               Id = 4, FirstName = "Nikolay", LastName = "Durov", Key = new byte[] {6, 7, 8, 9, 10}
+                                           },
+                        TestNull = null,
                     },
                     GetBytes(0xA1B2C3D4, 0x997275b5, Double.Epsilon, Int32.MaxValue, 0x1CB5C415, 5, 1, 2, 3, 4, 5, Int64.MaxValue, 0x50505003, 0x090A0B0C0D0E0F10,
                         0x0102030405060708UL, 0x191A1B1C1D1E1F20, 0x1112131415161718, 0x090A0B0C0D0E0F10, 0x0102030405060708UL, 0x1cb5c415, 0x3, 0xd23c81a3, 0x2, 0x76615005, 0x6c65,
                         0x72754405, 0x766f, 0x03020105, 0x0504, 0xc67599d1, 0x3, 0xd23c81a3, 0x4, 0x6b694e07, 0x79616c6f, 0x72754405, 0x766f, 0x08070605, 0x0A09,
-                        6, 9, 99, 999, 9999, 99999, 999999), "TestObject"),
+                        6, 9, 99, 999, 9999, 99999, 999999, 0xd23c81a3, 0x4, 0x6b694e07, 0x79616c6f, 0x72754405, 0x766f, 0x08070605, 0x0A09, 0x56730bcc), "TestObject"),
 
                 // getUsers([2,3,4])
                 new DataUnit(new GetUsersFunction {Arg1 = new List<int> {2, 3, 4}}, GetBytes(0x2d84d5f5, 0x1cb5c415, 0x3, 0x2, 0x3, 0x4), "GetUsersFunction"),

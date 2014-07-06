@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="StringUtilsFacts.cs" />
-    <Compile Include="TLShemaCompilerFacts.cs" />
+    <Compile Include="TLSchemaCompilerFacts.cs" />
     <Compile Include="TLStreamerFacts.cs" />
     <Compile Include="TestData\TestCases.cs" />
     <Compile Include="TestData\TestObjects.cs" />

@@ -13,7 +13,7 @@ using SharpTL.Compiler.Utils;
 namespace SharpTL.Compiler
 {
     /// <summary>
-    ///     TL type.
+    /// TL type.
     /// </summary>
     [DebuggerDisplay("{Text}")]
     public class TLType : IEquatable<TLType>
@@ -21,63 +21,71 @@ namespace SharpTL.Compiler
         private int _lastHashCode;
         private string _text;
 
-        public TLType(string name, bool autoConvertToConventionalCase = true)
-        {
-            OriginalName = name;
-            Name = autoConvertToConventionalCase ? "I" + name.ToConventionalCase(Case.PascalCase) : name;
-            Constructors = new List<TLCombinator>();
-        }
-
         public string OriginalName { get; set; }
 
         public string Name { get; set; }
 
         public bool IsVoid
         {
-            get { return Name == "void"; }
+            get { return this.Name == "void"; }
         }
 
         public uint? Number
         {
-            get { return Constructors != null && Constructors.Count > 0 ? Constructors.Select(ctr => ctr.Number).Aggregate((u, u1) => unchecked(u + u1)) : (uint?)null; }
+            get
+            {
+                return this.Constructors != null && this.Constructors.Count > 0
+                           ? this.Constructors.Select(ctr => ctr.Number).Aggregate((u, u1) => unchecked(u + u1))
+                           : (uint?) null;
+            }
         }
 
         public List<TLCombinator> Constructors { get; set; }
 
         public TLSerializationMode? SerializationModeOverride { get; set; }
 
+        public IEnumerable<TLCombinatorParameter> Parameters
+        {
+            get
+            {
+                return this.Constructors
+                           .Aggregate(null, (IEnumerable<TLCombinatorParameter> a, TLCombinator c) =>
+                                            a == null
+                                                ? c.Parameters
+                                                : a.Intersect(c.Parameters));
+            }
+        }
+
         public string Text
         {
-            get { return ToString(); }
+            get { return this.ToString(); }
+        }
+
+        public TLType(string name, bool autoConvertToConventionalCase = true)
+        {
+            this.OriginalName = name;
+            this.Name = autoConvertToConventionalCase ? "I" + name.ToConventionalCase(Case.PascalCase) : name;
+            this.Constructors = new List<TLCombinator>();
         }
 
         public override string ToString()
         {
-            int currentHashCode = GetHashCode();
-            if (_lastHashCode != currentHashCode)
+            int currentHashCode = this.GetHashCode();
+            if (this._lastHashCode != currentHashCode)
             {
-                _lastHashCode = currentHashCode;
-                _text = string.Format("{0} 0x{1:X8} (0x{2})", Name, Number,
-                    (Constructors != null && Constructors.Count > 0)
-                        ? Constructors.Select(u => u.Number.ToString("X8")).Aggregate((paramsText, paramText) => paramsText + " + 0x" + paramText)
-                        : string.Empty);
+                this._lastHashCode = currentHashCode;
+                this._text = string.Format("{0} 0x{1:X8} (0x{2})", this.Name, this.Number,
+                                           (this.Constructors != null && this.Constructors.Count > 0)
+                                               ? this.Constructors.Select(u => u.Number.ToString("X8"))
+                                                     .Aggregate(
+                                                                (paramsText, paramText) =>
+                                                                paramsText + " + 0x" + paramText)
+                                               : string.Empty);
             }
-            return _text;
+            return this._text;
         }
 
         #region Equality
-        public bool Equals(TLType other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-            return string.Equals(OriginalName, other.OriginalName) && string.Equals(Name, other.Name) && Constructors.SequenceEqual(other.Constructors);
-        }
 
         public override bool Equals(object obj)
         {
@@ -93,18 +101,32 @@ namespace SharpTL.Compiler
             {
                 return false;
             }
-            return Equals((TLType) obj);
+            return this.Equals((TLType) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                int hashCode = (Name != null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (OriginalName != null ? OriginalName.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (Constructors != null ? Constructors.GetHashCode() : 0);
+                int hashCode = (this.Name != null ? this.Name.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (this.OriginalName != null ? this.OriginalName.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (this.Constructors != null ? this.Constructors.GetHashCode() : 0);
                 return hashCode;
             }
+        }
+
+        public bool Equals(TLType other)
+        {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            return string.Equals(this.OriginalName, other.OriginalName) && string.Equals(this.Name, other.Name)
+                   && this.Constructors.SequenceEqual(other.Constructors);
         }
 
         public static bool operator ==(TLType left, TLType right)
@@ -116,6 +138,7 @@ namespace SharpTL.Compiler
         {
             return !Equals(left, right);
         }
+
         #endregion
     }
 }

@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SharpTL.BaseTypes;
 
 namespace SharpTL
 {
@@ -204,6 +205,17 @@ namespace SharpTL
         /// <exception cref="TLSerializerNotFoundException">When serializer not found.</exception>
         public static void Serialize(object obj, TLSerializationContext context, TLSerializationMode? modeOverride = null)
         {
+            if (obj == null)
+            {
+                if (modeOverride == TLSerializationMode.Bare)
+                {
+                    throw new InvalidOperationException("Can't serialize (null) in bare mode.");
+                }
+
+                context.Streamer.WriteUInt32(Null.Constructor);
+                return;
+            }
+
             var objType = obj.GetType();
             ITLSerializer serializer = context.Rig.GetSerializerByObjectType(objType);
             if (serializer == null)
@@ -229,6 +241,12 @@ namespace SharpTL
 
             // Read a constructor number.
             uint constructorNumber = streamer.ReadUInt32();
+
+            if (constructorNumber == Null.Constructor)
+            {
+                return null;
+            }
+
             ITLSerializer serializer = context.Rig.GetSerializerByConstructorNumber(constructorNumber);
             if (serializer == null)
             {

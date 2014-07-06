@@ -42,7 +42,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BaseTypes\Null.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="BaseTypes\ITLObject.cs" />
     <Compile Include="ITLSerializer.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Serializers\BuiltIn.cs" />
@@ -50,6 +52,7 @@
     <Compile Include="Serializers\Int256Serializer.cs" />
     <Compile Include="ITLVectorSerializer.cs" />
     <Compile Include="Serializers\TLBytesSerializer.cs" />
+    <Compile Include="Serializers\TLDynamicObjectSerializer.cs" />
     <Compile Include="TLSerializationContext.cs" />
     <Compile Include="Serializers\BooleanSerializer.cs" />
     <Compile Include="Serializers\DoubleSerializer.cs" />

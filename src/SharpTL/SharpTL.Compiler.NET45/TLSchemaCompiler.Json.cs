@@ -23,8 +23,14 @@ namespace SharpTL.Compiler
         {
             JsonObject tlSchemaJsonObject = JsonObject.Parse(json);
 
-            List<TLCombinator> constructors = CreateConstructorsFromJsonArrayObjects(tlSchemaJsonObject.ArrayObjects("constructors"));
-            List<TLCombinator> methods = CreateMethodsFromJsonArrayObjects(tlSchemaJsonObject.ArrayObjects("methods"));
+            List<TLCombinator> constructors =
+                CreateConstructorsFromJsonArrayObjects(tlSchemaJsonObject.ArrayObjects("constructors"))
+                    .Where(this.FilterConstructor)
+                    .ToList();
+
+            List<TLCombinator> methods = 
+                CreateMethodsFromJsonArrayObjects(tlSchemaJsonObject.ArrayObjects("methods"));
+
             List<TLType> types = UpdateAndGetTLTypes(constructors);
 
             var schema = new TLSchema {Constructors = constructors, Methods = methods, Types = types};

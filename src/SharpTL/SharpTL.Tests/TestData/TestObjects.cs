@@ -10,11 +10,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using BigMath;
+using SharpTL.BaseTypes;
 
 namespace SharpTL.Tests.TestData
 {
     [TLObject(0xA1B2C3D4)]
-    public class TestObject : IEquatable<TestObject>
+    public class TestObject : ITLObject, IEquatable<TestObject>
     {
         [TLProperty(1)]
         public bool TestBoolean { get; set; }
@@ -46,6 +47,12 @@ namespace SharpTL.Tests.TestData
         [TLProperty(10, TLSerializationMode.Bare)]
         public List<int> TestIntBareVector { get; set; }
 
+        [TLProperty(11)]
+        public ITLObject TestNestedObject { get; set; }
+
+        [TLProperty(12)]
+        public ITLObject TestNull { get; set; }
+
         #region Equality
         public bool Equals(TestObject other)
         {
@@ -57,8 +64,11 @@ namespace SharpTL.Tests.TestData
             {
                 return true;
             }
-            return TestBoolean.Equals(other.TestBoolean) && TestDouble.Equals(other.TestDouble) && TestInt == other.TestInt && TestIntVector.SequenceEqual(other.TestIntVector) &&
-                TestLong == other.TestLong && string.Equals(TestString, other.TestString) && TestInt128 == other.TestInt128 && TestInt256 == other.TestInt256;
+            return TestBoolean.Equals(other.TestBoolean) && TestDouble.Equals(other.TestDouble)
+                   && TestInt == other.TestInt && TestIntVector.SequenceEqual(other.TestIntVector) &&
+                   TestLong == other.TestLong && string.Equals(TestString, other.TestString)
+                   && TestInt128 == other.TestInt128 && TestInt256 == other.TestInt256
+                   && Equals(this.TestNestedObject, other.TestNestedObject);
         }
 
         public override bool Equals(object obj)
@@ -90,6 +100,7 @@ namespace SharpTL.Tests.TestData
                 hashCode = (hashCode*397) ^ (TestString != null ? TestString.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ TestInt128.GetHashCode();
                 hashCode = (hashCode*397) ^ TestInt256.GetHashCode();
+                hashCode = (hashCode*397) ^ TestNestedObject.GetHashCode();
                 return hashCode;
             }
         }
@@ -112,7 +123,7 @@ namespace SharpTL.Tests.TestData
     }
 
     [TLType(typeof (User), typeof (NoUser))]
-    public interface IUser
+    public interface IUser : ITLObject
     {
         int Id { get; set; }
     }
